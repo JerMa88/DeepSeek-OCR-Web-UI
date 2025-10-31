@@ -26,7 +26,7 @@ Download the DeepSeek-OCR model from one of these sources:
 
 ### 2. Installation Options
 
-#### Option A: Local Installation
+#### Option  Local Installation
 
 1. **Install Dependencies**
    ```bash
@@ -54,23 +54,7 @@ Download the DeepSeek-OCR model from one of these sources:
 4. **Access WebUI**
    
    Open browser: http://localhost:7860
-
-#### Option B: Docker Deployment
-
-1. **Prepare Model Directory**
-   ```bash
-   mkdir -p ./models
-   # Place your downloaded DeepSeek-OCR model in ./models/DeepSeek-OCR/
-   ```
-
-2. **Build and Run**
-   ```bash
-   docker-compose up -d
-   ```
-
-3. **Access WebUI**
-   
-   Open browser: http://localhost:7860
+ 
 
 ### 3. Usage
 

@@ -24,7 +24,7 @@
 
 ### 2. 安装方式
 
-#### 方式 A：本地安装
+#### 本地安装
 
 1. **安装依赖**
    ```bash
@@ -50,23 +50,7 @@
 4. **访问界面**
    
    浏览器打开：http://localhost:7860
-
-#### 方式 B：Docker 部署
-
-1. **准备模型目录**
-   ```bash
-   mkdir -p ./models
-   # 将下载的 DeepSeek-OCR 模型放在 ./models/DeepSeek-OCR/ 目录下
-   ```
-
-2. **构建并运行**
-   ```bash
-   docker-compose up -d
-   ```
-
-3. **访问界面**
-   
-   浏览器打开：http://localhost:7860
+ 
 
 ### 3. 使用方法
 
