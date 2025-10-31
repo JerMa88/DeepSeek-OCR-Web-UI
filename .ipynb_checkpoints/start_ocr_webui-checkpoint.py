@@ -221,15 +221,6 @@ class OCRApp:
         print(f"Number of images: {len(images) if images else 0}")
         print(f"Prompt: {prompt}")
         
-        # Map display names to internal values
-        format_mapping = {
-            "Markdown": "markdown",
-            "HTML": "html", 
-            "Annotated Image": "image"
-        }
-        internal_output_format = [format_mapping.get(fmt, fmt.lower()) for fmt in output_format]
-        print(f"Output format: {internal_output_format}")
-        
         if not images:
             return i18n.get('please_upload'), ""
             
@@ -342,7 +333,7 @@ class OCRApp:
                 
                 # Generate annotated image if coordinates found and image format is requested
                 annotated_image_path = None
-                if coordinates_with_text and isinstance(internal_output_format, list) and 'image' in internal_output_format:
+                if coordinates_with_text and isinstance(output_format, list) and 'image' in output_format:
                     annotated_image_path = self.draw_bounding_boxes(temp_image_path, coordinates_with_text)
                     print(f"Generated annotated image: {annotated_image_path}")
                 
@@ -387,7 +378,7 @@ class OCRApp:
         print(f"\n=== Processing complete, total results: {len(results)} ===")
         
         # Format results for display
-        formatted_results = self.format_results(results, internal_output_format)
+        formatted_results = self.format_results(results, output_format)
         summary = self.generate_summary(results)
         
         print(f"Formatted results length: {len(formatted_results)}")
@@ -586,7 +577,7 @@ def create_interface():
                 """)
             with gr.Column(scale=1, min_width=150):
                 language_selector = gr.Dropdown(
-                    choices=['en', 'zh'],
+                    choices=[('English', 'en'), ('中文', 'zh')],
                     value='en',
                     label=i18n.get('language_label'),
                     interactive=True
@@ -614,8 +605,8 @@ def create_interface():
                 
                 # Output format selector (multi-select)
                 output_format = gr.CheckboxGroup(
-                    choices=["Markdown", "HTML", "Annotated Image"],
-                    value=["Markdown"],
+                    choices=[("Markdown", "markdown"), ("HTML", "html"), ("Annotated Image", "image")],
+                    value=["markdown"],
                     label="Output Format / 输出格式",
                     info="Choose how to display the OCR results (multiple selections allowed) / 选择OCR结果的显示方式（可多选）"
                 )
@@ -685,6 +676,6 @@ if __name__ == "__main__":
         # server_name="0.0.0.0",
         server_name="localhost",
         server_port=7860,
-        share=False,  # Disable sharing to avoid API info generation issues
+        share=True,
         show_error=True
     )

@@ -1,0 +1,63 @@
+(.venv) (base) jerryma@bcm-dgxa100-0003:/work/projects/mhahsler/course_recomm/allocation001/vision-encode/DeepSeek-OCR-Web-UI$ python download.py 
+You are using a model of type deepseek_vl_v2 to instantiate a model of type DeepseekOCR. This is not supported for all configurations of models and can yield errors.
+You are attempting to use Flash Attention 2.0 without specifying a torch dtype. This might lead to unexpected behaviour
+You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+Some weights of DeepseekOCRForCausalLM were not initialized from the model checkpoint at deepseek-ai/DeepSeek-OCR and are newly initialized: ['model.vision_model.embeddings.position_ids']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+/work/projects/mhahsler/course_recomm/allocation001/vision-encode/DeepSeek-OCR-Web-UI/.venv/lib/python3.9/site-packages/transformers/generation/configuration_utils.py:590: UserWarning: `do_sample` is set to `False`. However, `temperature` is set to `0.0` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `temperature`.
+  warnings.warn(
+The attention mask and the pad token id were not set. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+Setting `pad_token_id` to `eos_token_id`:None for open-end generation.
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+The `seen_tokens` attribute is deprecated and will be removed in v4.41. Use the `cache_position` model input instead.
+`get_max_cache()` is deprecated for all Cache classes. Use `get_max_cache_shape()` instead. Calling `get_max_cache()` will raise error from v4.48
+=====================
+BASE:  torch.Size([1, 256, 1280])
+PATCHES:  torch.Size([6, 100, 1280])
+=====================
+The attention layers in this model are transitioning from computing the RoPE embeddings internally through `position_ids` (2D tensor with the indexes of the tokens), to using externally computed `position_embeddings` (Tuple of tensors, containing cos and sin). In v4.46 `position_ids` will be removed and `position_embeddings` will be mandatory.
+<|ref|>image<|/ref|><|det|>[[80, 58, 940, 333]]<|/det|>
+<|ref|>image_caption<|/ref|><|det|>[[300, 346, 714, 363]]<|/det|>
+<center>Figure 1: Architecture of the Recommender System Pipeline </center>  
+
+<|ref|>text<|/ref|><|det|>[[80, 391, 485, 451]]<|/det|>
+models to recommend or offer useful data for a personalized user experience. It also makes the LLM a goal- based agent, ensuring a robust recommendation and personalized user experience.  
+
+<|ref|>text<|/ref|><|det|>[[80, 455, 485, 616]]<|/det|>
+To bridge the technical and user- facing aspects of the system, the LLM interprets user prompts and synthesizes outputs from the recommender system into a parsed and formulated interface. The LLM with the checker feedback loop ensures that the recommendations are clear, actionable, and tailored to the user's query. The LLM can also provide reasoning for its choices. It enhances the system's usability by presenting complex academic information in a simplified manner with explanations that students can easily understand, expanding reasoning and customization abilities beyond the traditional recommender system.  
+
+<|ref|>text<|/ref|><|det|>[[80, 620, 485, 812]]<|/det|>
+A critical aspect of the system's design is the degree progress checker, which validates all recommendations to ensure compliance with university policies, prerequisite structures, and degree requirements. This component safeguards against invalid or infeasible course selections, ensuring that students can confidently rely on the recommendations to meet their academic goals. Though the logic is often complicated, most universities already use degree progressing tools to ensure their students can graduate with an automated program. If such an automated check does not exist, then manual checking can be supported by an LLM agent who is asked to explain why a proposed degree plan meets all requirements or not.  
+
+<|ref|>text<|/ref|><|det|>[[80, 816, 485, 933]]<|/det|>
+Unlike traditional Retrieval- Augmentation Generation (RAG) techniques (Lewis et al. 2021), this recommender system does not check the entire university data into a vector database. It only retrieves relevant user data, degree requirement data, and courses of interest data with minimal vector database retrieval. This novel approach ensures data robustness for generation and guarantees that only relevant data is being offered to the LLM in automation. A traditional RAG  
+
+<|ref|>text<|/ref|><|det|>[[530, 391, 935, 436]]<|/det|>
+chatbot may be easier to implement, yet it can lose relevant data or offer unnecessary information to the LLM, causing the LLM to miss important details or hallucinate.  
+
+<|ref|>sub_title<|/ref|><|det|>[[530, 449, 625, 465]]<|/det|>
+## Experiment  
+
+<|ref|>text<|/ref|><|det|>[[530, 469, 935, 499]]<|/det|>
+There are several metrics to test the performance of the recommender system.  
+
+<|ref|>text<|/ref|><|det|>[[530, 505, 936, 645]]<|/det|>
+1. Accuracy: How frequently does the system offer effective and correct recommendations where the proposed plan guarantees student graduation? 
+2. Speed: How fast does it take for the system to give an initial proposed plan to the users? How many iterations does it take on average for the user to accept the proposed plan? 
+3. Relevancy: How relevant are the recommendations to the student's degree requirements and academic interests?  
+
+<|ref|>text<|/ref|><|det|>[[530, 653, 935, 728]]<|/det|>
+Performance vs. Computational Cost Analysis To evaluate the performance and computational efficiency of various LLMs, we present a comparative analysis based on two key metrics: performance score (y-axis) and computational cost (x-axis).  
+
+<|ref|>text<|/ref|><|det|>[[530, 729, 936, 933]]<|/det|>
+100 simulated student user data were used to conduct this experiment, where each student pursued random degrees with random topics of interest while completing random courses during the first 1 or 2 semesters of their undergraduate career. These 100 user data were given to various LLMs to get an initial proposal and then sent to the Self- Correction Loop only once to test out the accuracy and efficiency of these models. Since the requirements checker has very complicated logic for each program, we implemented a requirement- checking agent (same model as the initial generating LLM) to prompt the initial LLM requirements that need to be met. Another separate agent is then used to grade the degree plan proposal as pass or fail: pass being the LLM proposed a degree plan that reaches all requirements.
+==================================================
+image size:  (1448, 1834)
+valid image tokens:  802
+output texts tokens (valid):  926
+compression ratio:  1.15
+==================================================
+===============save results:===============
+image: 100%|██████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 34100.03it/s]
+other: 100%|███████████████████████████████████████████████████████████████████████████████████| 11/11 [00:00<00:00, 172799.04it/s]
+Inference result: None
