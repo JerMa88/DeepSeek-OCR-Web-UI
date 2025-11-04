@@ -1,0 +1,1919 @@
+Starting DeepSeek-OCR inference and analysis...
+Using device: cuda
+GPU Memory - Total: 79.3GB, Allocated: 0.0GB, Cached: 0.0GB
+Attempting to load model with Flash Attention 2...
+Flash attention failed, falling back to regular attention: Using `low_cpu_mem_usage=True` or a `device_map` requires Accelerate: `pip install 'accelerate>=0.26.0'`
+Loading model with regular attention...
+✓ Successfully loaded model with regular attention
+GPU Memory after model loading - Allocated: 6.3GB, Cached: 6.3GB
+Model is on device: cuda:0
+Starting embedding_visual.py execution...
+Using image file: ./images/mamorx.png
+Running DeepSeek-OCR inference...
+=====================
+BASE:  torch.Size([1, 144, 1280])
+PATCHES:  torch.Size([6, 100, 1280])
+=====================
+<|ref|>sub_title<|/ref|><|det|>[[245, 40, 911, 74]]<|/det|>
+# MAMORX: Multi-Modal Scientific Review 
+
+<|ref|>sub_title<|/ref|><|det|>[[380, 80, 712, 109]]<|/det|>
+## External Knowledge 
+
+<|ref|>text<|/ref|><|det|>[[20, 95, 180, 116]]<|/det|>
+University of Colorado 
+
+<|ref|>text<|/ref|><|det|>[[30, 118, 170, 137]]<|/det|>
+Boulder 
+
+<|ref|>text<|/ref|><|det|>[[375, 100, 714, 120]]<|/det|>
+Pawan Tachayotin, Mike Wang, Tong Zeng, Bradley Sides, Daniel Acuna 
+
+<|ref|>text<|/ref|><|det|>[[400, 122, 690, 140]]<|/det|>
+University of Colorado Boulder 
+
+<|ref|>sub_title<|/ref|><|det|>[[130, 174, 220, 192]]<|/det|>
+### Background 
+
+<|ref|>text<|/ref|><|det|>[[50, 199, 350, 260]]<|/det|>
+The growing amounts of scientific literatures increase the burden of reviewers. Recent studies have explored AI-generated scientific paper reviews. While models like GPT-4 show promise, researchers hold mixed views on this approach. 
+
+<|ref|>sub_title<|/ref|><|det|>[[50, 275, 199, 292]]<|/det|>
+#### Major challenges to AI reviews: 
+
+<|ref|>text<|/ref|><|det|>[[50, 293, 280, 309]]<|/det|>
+- Factual inaccuracies and outdated information 
+
+<|ref|>text<|/ref|><|det|>[[50, 310, 199, 325]]<|/det|>
+- Reference fabrication 
+
+<|ref|>text<|/ref|><|det|>[[50, 326, 199, 342]]<|/det|>
+- Weak context understanding 
+
+<|ref|>text<|/ref|><|det|>[[50, 343, 199, 359]]<|/det|>
+- Inability to provide personalized, constructive feedback 
+
+<|ref|>text<|/ref|><|det|>[[50, 360, 333, 375]]<|/det|>
+Paper review processes as done by human reviewers often integrate 
+
+<|ref|>text<|/ref|><|det|>[[50, 376, 163, 392]]<|/det|>
+- textual analysis, 
+
+<|ref|>text<|/ref|><|det|>[[50, 393, 183, 408]]<|/det|>
+- visual interpretation 
+
+<|ref|>text<|/ref|><|det|>[[50, 409, 183, 425]]<|/det|>
+- citation assessment 
+
+<|ref|>text<|/ref|><|det|>[[50, 426, 163, 441]]<|/det|>
+- external knowledge 
+
+<|ref|>text<|/ref|><|det|>[[50, 460, 350, 504]]<|/det|>
+Recent advances in multimodal AI models (processing text, images, and graphs) and multi-agent systems with external knowledge access offer promising new approaches to address these limitations. 
+
+<|ref|>sub_title<|/ref|><|det|>[[130, 511, 200, 528]]<|/det|>
+### Methods 
+
+<|ref|>text<|/ref|><|det|>[[50, 535, 333, 588]]<|/det|>
+Multi-agent framework led by a Leader Agent that coordinates specialized agents 
+
+<|ref|>text<|/ref|><|det|>[[50, 589, 333, 633]]<|/det|>
+- All agents have access to the full text of the paper
+- Each agent has different system prompt-driven task 
+
+<|ref|>text<|/ref|><|det|>[[50, 634, 333, 678]]<|/det|>
+- Impact Agent: Evaluates significance and novelty
+- Experiments Agent: Critiques methodology, datasets, and experimental design 
+
+<|ref|>text<|/ref|><|det|>[[50, 679, 310, 694]]<|/det|>
+- Clarity Agent: Assesses organization, structure, and presentation 
+
+<|ref|>sub_title<|/ref|><|det|>[[50, 710, 150, 725]]<|/det|>
+### Novel components 
+
+<|ref|>text<|/ref|><|det|>[[50, 727, 350, 755]]<|/det|>
+- Novelty Assessment: Queries Semantic Scholar to evaluate paper originality 
+
+<|ref|>text<|/ref|><|det|>[[50, 756, 333, 800]]<|/det|>
+- Generates queries, builds database of related papers
+- Removes papers already cited by subject paper
+- Performs pairwise novelty assessment against relevant papers 
+
+<|ref|>text<|/ref|><|det|>[[50, 801, 333, 845]]<|/det|>
+- Figure Critic Assessment: Analyzes visual elements using vision-capable LLMs 
+
+<|ref|>text<|/ref|><|det|>[[50, 846, 333, 890]]<|/det|>
+- Extracts figures and captions using PaperMage
+- Evaluates consistency with paper title/abstract
+- Provides clarity assessment and descriptive summaries 
+
+<|ref|>text<|/ref|><|det|>[[50, 911, 333, 940]]<|/det|>
+- Domain Huacheng: Analyzes visual elements using vision-capable LLMs 
+
+<|ref|>sub_title<|/ref|><|det|>[[350, 174, 580, 192]]<|/det|>
+### Table 1. Comparison of example reviews 
+
+<|ref|>table<|/ref|><|det|>[[350, 199, 978, 300]]<|/det|>
+<table><tr><td></td><td>Example Review</td><td>Table 2. Comparison of review systems using Elo ratings across different dimensions. Scores are presented as mean ± standard error of the mean.</td></tr><tr><td>System Reviewer</td><td>The paper presents an interesting approach but lacks sufficient experimental validation. The proposed algorithm seems similar to Smith et al. (2023), Figure 2 is unclear and needs better labeling. The work shows some novelty but requires more comparison with recent literature. The theoretical foundation appears sound, but practical implications are not fully explored. Overall, major revisions are needed.</td><td>Model</td><td>Technical Quality</td><td>Constructive- ness</td><td>Clarity</td><td>Overall Quality</td><td>Combined Score</td><td>Style-Adjusted Score</td></tr><tr><td>Prompt Method</td><td>The paper introduces a new method for image classification. The authors claim improved accuracy over existing methods. The methodology seems sound, but more details would be beneficial. The conclusion summarizes the main findings effectively.</td><td>Human Reviewer</td><td>1208 ± 6</td><td>1236 ± 7</td><td>1255 ± 8</td><td>1322 ± 11</td><td>1278 ± 11</td><td>1112 ± 5</td></tr><tr><td>Liang et al.</td><td>The proposed image classification method shows potential. The authors provide a detailed explanation of their algorithm and compare it to existing approaches. The results indicate improved performance, but more extensive experiments on diverse datasets would strengthen the claims. The paper is well-structured and written clearly.</td><td>Prompt-based</td><td>1419 ± 4</td><td>1402 ± 4</td><td>1429 ± 5</td><td>1482 ± 7</td><td>1449 ± 8</td><td>1336 ± 12</td></tr><tr><td>D'Arcy et al.</td><td>The paper presents a novel approach to image classification using a hybrid neural network architecture. The authors provide a comprehensive literature review, situating their work within the current state-of-the-art. The methodology is well-explained, with clear justifications for design choices. The experimental results are promising, showing significant improvements over baseline methods. However, the discussion of limitations could be expanded, and future work directions could be more clearly outlined. The paper's structure and writing are commendable, facilitating easy understanding of the complex concepts.</td><td>D'ACO MAMORX (Ours)</td><td>1810 ± 4</td><td>1787 ± 5</td><td>1769 ± 6</td><td>1677 ± 9</td><td>1733 ± 9</td><td>1955 ± 8</td></tr></table>
+
+<|ref|>table<|/ref|><|det|>[[350, 300, 978, 300]]<|/det|>
+<table><tr><td></td><td>Model</td><td>Technical Quality</td><td>Constructive- ness</td><td>Clarity</td><td></td><td>Overall Quality</td><td>Combined Score</td><td>Style-Adjusted Score</td></tr></table>
+
+<|ref|>table<|/ref|><|det|>[[350, 300, 978, 400]]<|/det|>
+<table><tr><td></td><td>Model</td><td>Technical Quality</td><td>Constructive-ness</td><td>Clarity</td><td>Overall Quality</td><td>Combined Score</td><td>Style-Adjusted Score<br/>Reviewers</td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td><td>1236 ± 7</td><td></td><td>1255 ± 8</td><td>1322 ± 11</td><td>1278 ±11</td><td>1112 ± 5</td></tr><tr><td>Prompt-based</td><td>1419 ± 4</td><td>1402 ± 4</td><td></td><td>1429 ± 5</td><td>1482 ± 7</td><td>1449 ±8</td><td>1336 ± 12</td></tr><tr><td>Liang et al.</td><td>The proposed image classification method shows potential.</td><td>The authors provide a detailed explanation of their algorithm and compare it to existing approaches. The results indicate improved perfor-mance, but more extensive experiments on diverse datasets would strengthen the claims. The paper is well-structured and writ-ten clearly.</td><td>Prompt-based</td><td>1419 ± 4</td><td>1402 ± 5</td><td>1429 ± 5</td><td>1482 ± 7</td><td>1449 ±9</td></tr><tr><td>D'Arcy et al.</td><td>The paper presents a novel approach to im-age classification using a hybrid neural network architecture. The authors provide a comprehensive literature review, situating theirwork within the current state-of-the-art. The methodology is well-explained, with clear justificationsfor design choices. The experimental results are promising, showing significant improvements over baseline methods. However, the discuss-ion of limitations could be expanded, and future work directions could be more clearly outlined. The paper's struc-ture and writing are commendable, facilitating easy understanding of the complex concepts.</td><td>D'ACOMAMORX (Ours)</td><td>1810 ± 4</td><td>1787 ±5</td><td>1769 ± 6</td><td>1677 ± 9</td><td>1733± 9</td><td>1955 ± 8</td></tr></table>
+
+<|ref|>table<|/ref|><|det|>[[348, 400, 978, 400]]<|/det|>
+<table><tr><td></td><td>Model</td><td>Technical quality</td><td>Constructive- ness</td><td>Clarity</td><td>Overall Quality</td><td>Combined Score<br/>Reviewers</td><td>Style-Adjusted Score</td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td><td>1236 ± 8</td><td></td><td>1255 ± 8</td><td>1322 ± 11</td><td>1279 ± 11</td><td>1112 ± 5</td></tr><tr><td>Prompt-based</td><td>1419 ±4</td><td>1402 ± 4</td><td></td><td>1429 ± 5</td><td></td><td>1482 ± 7</td><td>1449 ± 8</td></tr><tr><td>Liang et al.</td><td>The proposed image classification method shows potential. <br/>The authors provide a detailed explanation of their algorithm and compare it to existing approaches. The results indicate improvement performance, but more extensive experiments on diverse datasets would strengthen the claims. The paper is well-structured, and writing are commendable, facilitating easy understanding of the complex concepts.</td><td>Prompt-based</td><td>1419 ± 4</td><td>1402 ± 5<td>1429 ± 5</td><td>1482 ± 7</td><td>1449 ± 9</td></td></tr><tr><td>D'Arcy et al.</td><td>The paper presents a novel approach to imag e classification using a hybrid neural network architecture. The authors provide a comprehensive literature review, situating their works within the current state-of-the-art. The methodology is well-explained, with clear justifications of design choices. The experimental results are promising, showing significant improvements over baseline methods. However, the discussions of limitations could be expanded, and future work directions could be more clearly outlined. The paper's structur and writing are commendable, facilitating easy understanding of the complex concepts.</td><td>D'ACoMAMORX (Ours)</td><td>1810 ± 4</td><td>1787 ±</td><td>1769 ± 6</td><td>1677 ± 9</td><td>1733 ±9</td><td>1955 ± 8</td></tr></table>
+
+<|ref|>table<|/ref|><|det|>[[3480, 400, 978, 400]]<|/det|>
+<table><tr><td></td><td>Model<td>Technical Quality</td><td>Constructive- ness</td><td>Clarity</td><td>Overall Quality</td><td>Overall Quality</td><td>Overall Quality</td><td>Overall Quality</td><td>Overall Quality</td></td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td><td>1236 ± 9</td><td></td><td>1255 ± 8</td><td>1322 ± 11</td><td>1277 ± 11</td><td>1112 ± 5</td></tr><tr><td>Prompt-based</td><td>1418 ± 4</td><td>1402 ± 4</td><td></td><td>1429 ± 5<td>1482 ± 7</td><td>1449 ± 8</td><td>1336 ± 11</td></td></tr><tr><td>Liang et al.</td><td>The proposed image classification method shows potential. &lt;br/&gt;The authors provide a detailed explanation of their algorithm and compare it to existing approaches. The results indicate improvements over baseline methods. However, the discussion of limitations could be expanded, and future work directions should be more clearly outlined. The paper's structure and writing are commendable, facilitating easy understanding of complex concepts.</td><td>Prompt-based</td><td>1418 ± 4</td><td>1402 ± 5</td><td>1429 ± 5</td><td></td><td>1482 ± 7</td><td>1448 ± 8</td></tr><tr><td>D'Arcy et al.</td><td>The paper presents a novel approach to Image classification using a hybrid neural network architecture. The authors provide a comprehensive literature review, situating theirworks within the current state-of-the-art. The methodology is well-explained, with clear justificationsof design choices. The experimental results are promising, showing significant improvements over baseline methods. However, the dis-cussions of limitations could be expanded, and future work directions could be more clearly outlined. The paper's structural and writing are commendable, facilitating easy understanding of the complex concepts.</td><td>D'AComAMORX (Ours)</td><td>1810 ± 4</td><td>1787 ±6</td><td>1769 ± 6</td><td>1677 ± 9</td><td>1733 ±8</td><td>1955 ± 8</td></tr></table>
+
+<|ref|>table<|/ref|><|det|>[[3480: 400, 978, 400]]<|/det|>
+<table><tr><td></td><td>Model</td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td></tr><tr><td>Prompt-based</td><td>1418 ± 4</td></tr><tr><td>Liang et al.</td><td>The proposed image classification method shows potential.&lt;br/&gt;The authors provide a detailed explanation of their algorithm and compare it with existing approaches. The results indicate improvements over baseline methods. However, the discussion of limitations could be extended, and future work directions should be more clearly outlined. The paper's structure and writing are commendably, facilitating easy understanding of the complex concepts.</td><td>Prompt-based</td><td>1418 ± 4</td></tr><tr><td>D'Arcy et al.</td><td>The paper presents a novel approach to Im age classification using a hybrid neural network architecture. The authors provide a comprehensive literature review, situating their research within the current state-of-the-art. The methodology is well-explained, with clear justifications and design choices. The experimental results are promising, showing significant improvements over baseline methods. However, the discu-sions of limitations could be expanded, and future work directions should be more clearly outlined. The paper's structural and writing are commendably, facilitating easy understanding of the complex concepts.</td><td>D'ACOMAMORX (Our)</td><td>1810 ± 4</td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td></tr><tr><td>Prompt-based<td>1418 ± 4</td></td></tr><tr><td>Liang et al.</td><td>The proposed image classification method shows potential.<br/>The authors provide a detailed explanation of their algorithm and compare it with existing approaches. The results indicate improvement performance, but more extensive experiments on diverse datasets would strengthen the claim. The paper is well-structured, and writing are commendable, facilitating easy understanding of the complex concept-s.</td><td>Prompt-based</td><td>1418 ± 4</td></tr><tr><td>D'Arcy e al.</td><td>The paper presents a novel approach to image classification using a hybrid neural network architecture.<br/>The authors provide a comprehensive literature review, situating their research within the current state-of-the-art. <br/>The methodology is well-explained, with clear justifications of design choices. The experimental results are promising. showing significant improvements over baseline methods. However, the discussions of limitations could be expanded, and future works directions should be more clearly outlined. The paper's structural and writing are commendably, facilitating easy understand-ing of the complex concepts.</td><td>D'ACOMAMORX (Our)</td><td></td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td></tr><tr><td>Prompt-based<br/>Liang et al.</td><td>1418 ± 4</td></tr><tr><td>D'Arcy et al.</td><td></td><td>The proposed image classification method shows potential.&lt;br/&gt;The author provides a detailed explanation of their algorithm and compare it with existing approaches. The results indicate improvements over baseline method-s. However, the discussion of limitations could be expanded, and future work directions should be more clearly out-lined. The paper's structural and writing are commendably, facilitating easy understanding of the complex concepts. &lt;br/&gt;The experimental results are promising, showing significant improvements over baseline methods. However, the discussions of limitations couldbe expanded, and future work directions should be more clearly outlined. The paper's structural and writing are commended, facilitating easy understanding of the complex concepts.</td><td>D'ACOMAMORX (our)</td><td>1810 ± 4</td></tr><tr><td>Human Reviewer</td><td>1208 ±6</td></tr><tr><td>Prompt-based</td><td>1418 ± 4</td></tr><tr><td>Ling et al.</td><td>The proposed image classification method shows potential.&lt;br/& gt;The authors provide a detailed explanation of their algorithm and compare it with existing approaches. The results indi-cate improvements over baseline methods. However, the discussion of limitations could be expanded, and future work directions would be more clearly outlined. The paper's structural and writing are commendably, facilitating easy understanding of complex concepts.</td><td>D'ACOMAMORX (our)</td><td>1810±4</td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td></tr><tr><td>Prompt based</td><td>1418 ± 4</td></tr><tr><td>Liang et al.</td><td>The paper presents a novel approach to Image classification using a hybrid neural network architec-ture. The authors provide a comprehensive literature review, situating their research within the current state-of-the art. The methodology is well-explained, with clear justifications and design choices. The experimental results areresponsive to the proposed approach.</td><td>D'ACOMAMORX (our)</td><td>1810 ± 5</td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td></tr><tr><td>Prompt-based,</td><td>1418 ± 4</td></tr><tr><td>Liang et al.</td><td>The authors provide a detailed explanation of their algorithm and compare it with existing approaches. The results indicateimprovements over baseline methods. However, the discussion of limitations could be expanded, and future work directions shouldbe more clearly outlined. The paper's structural and writing are commendably, facilitating easy understanding of thecomplex concepts.</td><td>D'ACOMAMORX (our)</td><td></td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td></tr><tr><td colspan="2"></td><td>The proposed image classification method shows potential.&lt;br/&gt;The paper provides a detailed explanation of their algorithm and compare it with existing approaches. The results indicate improvements over baselinemethods. However, the discussion of limitations could be expanded, and future work directions should be more clearlyoutlined. The paper's structural and writing are commendably, facilitating easy understanding of the complex concepts.&lt;br/&gt;The experimental results are promising, showing significant improvements over baseline methods.<br/>However, the discussions of limitations could be expanded, and future work directions should be more clearly outlined. The paper'sstructural and writing are commendably, facilitating easy understanding of the complex concepts.</td><td>D'AComAMORX (our)</td><td></td></tr><tr><td>Human Reviewer</td><td>1208 ±6</td></tr><tr><td>Prompt-based</td></tr><tr><td>Liang et al.</td><td>The proposed image classification method shows potential.  The authors provide a detailed explanation of their algorithm and compare it with existing approaches. The results indicate improvementsover baseline methods. However, the discussion of limitations could be expanded, and future work directions should bemore clearly outlined. The paper's structural and writing are commendably, facilitating easy understanding of the complexconcepts.</td><td>D'ACOMAMORX (our)</td><td></td></tr><tr><td></td><td>1810 ± 4</td></tr><tr><td>Human Reviewer</td><td>1208 ± 5</td></tr><tr><td>Prompt-based</td><td>1418 ± 4</td></tr><tr><td>Liang e al.</td><td>The proposed image classification method shows potential.&lt;br/&gt;&lt;br/&gt;The authors provide a detailed explanation of their algorithm and compare itwith existing approaches. The results indicate improvements over baseline methods. However, the discussion of limitations could beexpanded, and future work directions should be more clearly outlined. The paper's structural and writing arecommendably, facilitating easy understanding of the complex concepts.</td><td>D'ACOMAMORX(our)</td><td></td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td></tr></table>
+
+<|ref|>table<|/ref|><|det|>[[348, 400, 978, 600]]<|/det|>
+<table><tr><td></td><td>Model</td><td>Technical Quality</td><td>Constructive-</td><td>Clarity</td><td>Overall Quality</td><td>Overall Quality</td><td>Overall Quality</td><td>Overall Qualit</td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td><td>1236 ± 6</td><td></td><td>1255 ± 8</td><td>1322 ± 11</td><td>1276 ± 11</td><td>1112 ± 5</td><td></td></tr><tr><td>Prompt-based</td><td>1418 ± 4</td><td>1402 ± 5</td><td></td><td>1429 ± 5</td><td>1482 ± 7</td><td>1448 ± 8</td><td>1336 ± 11</td><td></td></tr><tr><td>Liang et al.</td><td>The proposed image classification method shows potential. (The authors provide a detailed explanation of their algorithm and compare it with existing approaches. The results indicate improved performance, but more extensive experiments on diverse datasets would strengthen the claim. The paper is well-structured and writ-ten clearly.)</td><td>The authors provide a detailed explanation of their algorithm and compare it with existing approaches. The resul-tin indicate improvements over baseline methods. However, the discussion of limitations could be expanded, and future work direction-s should be more clearly outlined. The paper's structural and writing are commendably, facilitating easy understanding ofthe complex concepts.</td><td>Prompt-based</td><td>1418 ± 4</td><td>1402 ±5</td><td>1429 ± 5</td><td>1482 ± 7</td><td>1449± 8</td><td>1336 ± 12</td></tr><tr><td>D'Arcy et al. (The authors provide a detailed explanation of their algorithm and compare it with existing approaches. The resul-</td><td>The proposed image classification method shows potential. (The authors provide a detailed explanation of their algo-rithm and compare it with existing approaches. The results indicate improvements over baseline methods. However, the discussionof limitations could be expanded, and future work directions should be more clearly outlined. The paper's structuraland writing are commendably, facilitating easy understanding of the complex concepts.</td><td>The proposed image classification method shows potential. (The authors provide a detailed explanation of the algorithm and compare it with existing approaches. The results indicate improvements over baseline methods. However, the discussions of limitations could be expanded, and future work directions should be more clearly outlined.</td><td>The proposed image classification method shows potential. (The authors provide a detailed explanation of th-e algorithm and compare it with existing approaches. The results indicate improvements over baseline methods. However, the discussi-on of limitations could be expanded, and future work directions should be more clearly outlined. The paper's struc-ture and writing are commendably, facilitating easy understanding of the complex concepts.</td><td>The proposed image classification meth-</td><td></td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td><td>1236 ± 10</td><td></td><td>1255 ± 8</td><td>1322 ± 11</td><td>1275 ± 11</td><td>1112 ± 5</td><td></td></tr><tr><td>Prompt-based</td></tr><tr><td>Liang et al.</td><td>The proposed Image classification method shows potential. (The authors provide a detailed explanation of their algorithm and compare it with exis-ting approaches. The results indicate improvements over baseline methods. However, the discussion of limitations could be expanded.</td><td>The proposed image classification method shows potential. (The authors provide a detailed explanation oftheir algorithm and compare it with existing approaches. The results indicate improvements over baseline methods. However, the discu-sion of limitations could be expanded, and future work directions should be more clearly outlined. The paper's structur-ing and writing are commendably, facilitating easy understanding of the complex concepts.</td><td>The proposed image clas-sification method shows potential. (The authors provide a detailed explanation of their algorithm and compare it with existing ap-proaches. The results indicate improvements over baseline methods. However, the discussion of limitations could be expanded,</td><td>The proposed image classification method shows potential. (The authors provide a detailed explanation of their al-gorithm and compare it with existing approaches. The results indicate improvements over baseline methods. However, the discussions</td><td>The proposed image classification method shows potential. (The authors provide a detailed explanation of their algorithms and compare it with existing approaches. The results indicate improvements over baseline methods. However, the discussion</td><td>The proposed image classification method shows potential. (The authors provide a detailed explanation of their algorith-m and compare it with existing approaches. The results indicate improvements over baseline methods. However, the discussion.</td></tr><tr><td>D'Arcy et al.</td><td>The proposed image classification method shows potential. (The authors provide a detailed explana-tion of their algorithm and compare it with existing approaches. The results indicate improvements over baseline methods. However.</td><td>The proposed image classification method shows potential. (The authors provide a detailed explanation of there algorithm and compare it with existing approaches. The results indicate improvements over baseline methods. However, the dis-cussion of limitations could be expanded, and future work directions should be more clearly outlined. The paper's struction and writing are commendably, facilitating easy understanding of the complex concepts.</td><td>The proposed image classifica-tion method shows potential. (The authors provide a detailed explanation of their algorithm and compare it with existing approach-s. The results indicate improvements over baseline methods. However, the discussion of limitations could be expanded, but the discussion of limitations could be expanded, and future work directions should be more clearly outlined. The pa-per's structure and writing are commendably, facilitating easy understanding of the complex concepts.</td><td>The proposed image classificatio-n method shows potential. (The authors provide a detailed explanation of their algorithm and compare it with existing approache-s. The results indicate improvements over baseline methods. However, the discussion of limitations could be expanded. The paper's structure and writing are commendably, facilitating easy understanding of the complex concepts. The experimental results are promising, showing significant improvements over baseline methods. However, the discussions of limi-tations could be expanded, and future work directions should be more clearly outlined. The paper's structural and writ-ing are commendably, facilitating easy understanding of the complex concepts.</td><td>The proposed image classification method showsthat potential. (The authors provide a detailed explanation of their algorithm and compare it with existing approaches.</td><td>The proposed image classification method shows that potential. (The authors provide a detailed explanation of their algorithm and compare it with existing approaches. (The results indicate improvements over baseline methods. However, the discussion of limitations could be expanded, and future works directions should be more clearly outlined. The paper's structure and writing are commendably, facilitating easy understand-ing of the complex concepts.</td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td><td>1236 ± 11</td><td></td><td>1255 ± 8</td><td>1322 ± 11</td><td>1274 ± 11</td><td>1112 ± 5</td><td></td></tr><tr><td>Prompt-based</td><tr><td>Liang et al.</td><td>The proposed image classification method shows that potential. (The authors provide a detailed explanation oftheir algorithm and compare it with existing approaches. The results indicate improvements over baseline methods. However, thediscussion of limitations could be expanded, and future work directions should be more clearly outlined. The paper’s structure and writing are commendably, facilitating easy understanding of the complex concepts.</td><td>The proposed Image classification method shows that potential. (The authors provide a detailed explanation of their algorithm and compare itwith existing approaches. The results indicate improvement over baseline methods. However, the discussion of limitations could be expanded, and future work directions should b- more clearly outlined. The paper's structure and writing are commendably, facilitating easy understanding of the com- plex concepts.</td><td>The proposed Image classification method shows that potential. (The authors provide a detailed explana-tion of their algorithm and compare it with existing ap-proaches. The results indicate improvements over baseline methods, but the discussion of limitations could be expanded, and future work directions should be more clearly outlined, and the paper's structure and writing are commendably, facilitating easy understanding of the complex concepts.</td><td>The pro-posed Image classification method shows that potential. (The authors provide a detailed explanation of their algorithm and compareit with existing approaches. The results indicate improvements over baseline methods, but the discussion of limitations could be expanded, and the paper's structure and writing are commendably, facilitating easy understanding of the complex concepts, and the experimental results are promising, showing significant improvements over baseline methods. However, the discussions of limitations could b-expanded, and future work directions should be more clearly outlined. The paper's structure and writing are commend-ably, facilitating easy understanding of the complex concepts.</td><td>The proposed Image classification method shows thatpotential. (The authors provide a detailed explanation of their algorithm and compare it with existing ap-proaches, The results indicate improvements over baseline methods, but the discussion of limitations could be expanded, and future works directions should be more clearly outlined, and the paper's structure and writing are commend-ably, facilitating easy understanding of the complex concepts.</td></tr><tr><td>D'Arcy et al.</td><td>The proposed Image classification method shows that potential. (The authors provide a detailed explanation oftheir algorithm and compare itwith existing approaches. The results indicate improvements over baseline methods, but the discussion of limitations could be expanded. The paper’s structure and writing are commend-ably, facilitating easy understanding of the complex concepts.</td><td>The pro-posed Image classification method showsthat potential. (The authors provide a detailed explanation of their algorithm and compareit with existing ap-proaches. The results indicate improvements over baseline methods, but the discussion of limitationscould be expanded, and future work directions should be more clearly outlined. The paper’s structure and writ-ing are commend-ably, facilitating easy understanding of the complex concepts.</td><td>The pro-posed image classification method shows that potential. (The authors provide a detailed explanation of their algorithm and compareitwith existing ap-proaches. The results indicate improvements over baseline methods, but the discussion of limitations couldbe expanded, and future work directions should be more clearly outlined. The paper’s structure and writingare commend-ably, facilitating easy understanding of the complex concepts.</td><td>The pro-posed image clas-sification method shows that potential. (The authors provide a detailed explanation of their algorithm and compareit with exis-ting approaches. The results indicate improvements over baseline methods, but the discussion of limitations could be expanded, but the discussion of limitations could be expanded, and future works directions should be more clearly outlined. The pa-per’s structure and writing are commend-ably, facilitating easy understanding of the complex concepts.</td></tr><tr><td colspan="2"></td><td>The proposed Image classification method shows that potential. (The authors provide a detailed explanation oftheir algorithm and compare it with existing ap-proaches. The results indicate improvements over baseline methods, butthe discussion of limitations could be expanded, and future work directions should be more clearly outlined. The paper’ s structure and writing are commend-ably, facilitating easy understanding of the complex concepts.</td><td>The paper’s structure and writing are commend-ably, facilitating easy understanding of the complex concepts. The experimental results are promising, showing significant improvements ov-er baseline methods. However, the discussions of limitations could be expanded, and future work directions should be mor-ely clearly outlined. The paper’s structure and writing are commend-ably, facilitating easy understanding of the complex con-cepts.</td><td>The paper’s structure and writing are commend-ably, facilitating easy understanding of complex concepts.</td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td><td>1235 ± 9</td><td></td><td>1255 ± 8</td><td>1322 ± 11 1276 ± 11</td><td>1112 ± 5</td><td></td></tr><tr><td>Prompt based</td><td>1418 ± 4</td><td>1402 ± 5</td><td></td><td>1428 ± 5</td><td>1482 ± 7</td><td>1448 ± 8</td><td></td></tr><tr><td>Liang et al.</td><td>The proposed Image classification method shows that potential. (The authors provide a detailled explanation of their algorithm and compare it with existing ap-proaches. The results indicate improvements over baseline method-s. However, the discussion of limitations could be expanded.</td><td>The proposed Image classification method shows that potential. (The authors provide a detailed explanationof their algorithm and compare it with existing approaches. The results indicate improvements over baseline methods. However,the discussion of limitations could be expanded, and future work directions should be more clearly outlined. The pa-pers structure and writing are commend-ably, facilitating easy understanding of the complex concepts.</td><td>The proposal-based Image classification method shows that potential. (The authors provide a detailed explanation of their algorithm and compare-it with existing approaches. The results indicate improvements over baseline methods. However, the discussion of limitations couldbe expanded, and future work directions should be more clearly outlined. The pa-pers structure and writing is commend-ably, facilitating easy understanding of the complex concepts.</td><td>The proposal-based Image classification meth-od shows that potential. (The authors provide a detailed explanation of their algorithm and compare it with existing ap-proach-s. The results indicate improvements over baseline methods, but the discussion of limitations could be expanded, and fut-ure work directions should be more clearly outlined. The paper’s structure and writing are commend-ably, facilitating easy understanding of complex concepts.</td><td>The proposal-based Image classification method shows that potential. (The authors providea detailed explanation of their algorithm and compare it with existing ap-proaches. The results indicate improvements over baselinemethods, but the discussion of limitations could be expanded, and future work directions should be more clearly outlined.The paper’s structure and writing are commend-ably, facilitating easy understanding of the complex concepts. </td></tr><tr><td>D'Arcy et al.</td><td>The proposed Image classification method shows thatpotential. (The authors provide a detailed explanationof their algorithm and compare it with existing ap-proaches. The results indicate improvements over baseline methods, b-but the discussion of limitations could be expanded, and future work directions should be more clearly outlined. The papers structure and writing are commend-ably, facilitating easy understanding of the complex concepts.</td><td>Theproposed Image classification method shows that potential. (The authors provide a detailed explanation of their algorithm and com-pare it with existing approaches. The results indicate improvements over baseline methods, but the discussion of limitations could be expand-ed, and future work directions should be more clearly outlined. The paper’s structure and writing are commenda-bly, facilitating easy understanding of the complex concepts.</td><td>The proposed Image classification method shows that potential with existing approaches. The results indicate improvements over baseline methods, but the discussion of limitations could be expan-ded, and future work directions should be more clearly outlined. The paper’s structure and writing are commended-ably, facilitating easy understanding of the complex concepts.</td><td>The proposed Image classification method showsthat potential. (The authors provide a detailed explanation of their algorithm and compare it with existing ap-pro-aches. The results indicate improvements over baseline methods, but the discussion of limitations could be expanded, an-d future work directions should be more clearly outlined. The paper’s structure and writing are commend-ably facilitating easy understanding of the complex concepts.</td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td></tr><tr><td>Prompt-based </td><td>1418 ± 4</td><td>1402 ± 5</td><td></td><td>1427 ± 9</td><td>1322 ± 11</td><td>1275 ± 11</td><td></td></tr><tr><td>Liang et al.</td><td>The proposed Image classification method showsthat potential. (The authors provide a detailed explanationof their algorithm and compare it with existing ap-proaches, The results indicate improvements over baseline methods, b-but the discussion of limitations could be expanded, and fut-ure work directions should be more clearly outlined.The paper’s structure and writing are commend-ably, facili-ating easy understanding of the complex concepts.</td><td>The proposed Image classification method shows that potential. ( The authors provide a detailed explanation of their algorithm and compare it with existing ap-proaches. The results indi-cate improvements over baseline methods, but the discussion of limitations could be expanded, and future work directions should b- more clearly outlined.</td><td>The proposed Image classification method shows that potential. (The authors provide a detailed explanation o-their algorithm and compare it with existing ap-proaches. The results indicate improvements over baseline methods, but th-e discussion of limitations could be expanded, and future work directions should be more clearly outlined. The paper s-tructure and writing are commend-ably, facilitating easy understanding of the complex concepts.</td><td>The proposed image classification method shows that potential. (The authors provide a detailed explanationof their algorithm and compare itwith existing ap-proaches. The results indicate improvements over baseline methods, but the discussion of limitationscouldbe expanded, and future work directions should be more clearly outlined. The paper’s structure and writ-</td></tr><tr><td>D'Arcy et al.</td><td>The proposed Image classification method shows that that potential. (The authors provide a detailed explanation of their algorithm and compare it with existing ap-approaches. The results indicate improvements over baseline methods, but the discussion of limitations could be expanded,</td><td>The proposed Image classification method shows that that potential. (The authors provide a detailed explanationof their algorithm and compare it with existing ap-pro-aches. The results indicate improvements over baseline methods. But the discussion of limitations could be expanded, and future work directions should be more clearly outlined. The p-</td><td>The proposed Image classification method shows that that potential. (The authors provide a detailed explanation o-their algorithm and compare it with existing approaches. The results indicate improvements over baseline methods, but the discussion of limitations couldbe expanded, and fut-</td><td>The proposed Image classification method shows that that potential. (The authors provide a==================================================
+image size:  (1584, 1224)
+valid image tokens:  0
+output texts tokens (valid):  8190
+OCR inference failed: division by zero
+Loaded OCR result from ./output/result.mmd
+
+OCR Result (first 500 chars):
+![](images/0.jpg)
+
+
+<center>Figure 1: Architecture of the Recommender System Pipeline </center>  
+
+
+models to recommend or offer useful data for a personalized user experience. It also makes the LLM a goal- based agent, ensuring a robust recommendation and personalized user experience.  
+
+
+To bridge the technical and user- facing aspects of the system, the LLM interprets user prompts and synthesizes outputs from the recommender system into a parsed and formulated interface. The LLM with the chec
+================================================================================
+
+Initializing optical compression pipeline...
+Compressing text to optical representation...
+
+Generating visualization...
+
+================================================================================
+COMPRESSION SUMMARY
+================================================================================
+Original text length: 3875 characters
+Text embedding dimension: 384
+Compressed embedding dimension: 38
+Compression ratio: 10.11×
+Storage reduction: 90.1%
+✓ Compression successful! Achieved 10.11× reduction
+
+Compressed vector saved to ./compressed_vector.npy
+
+================================================================================
+ADDITIONAL DOCUMENT ANALYSIS
+================================================================================
+
+Performing visual QA...
+=====================
+BASE:  torch.Size([1, 256, 1280])
+PATCHES:  torch.Size([6, 100, 1280])
+=====================
+ The main topic of this document is a multi-modal scientific review of the external knowledge of the external knowledge of the external knowledge of the external knowledge of the external knowledge of the external environment.
+QA Answer: Error: Model inference returned None
+
+Generating summary...
+=====================
+BASE:  torch.Size([1, 256, 1280])
+PATCHES:  torch.Size([6, 100, 1280])
+=====================
+The document provides an overview of a study titled "Multi-Modal Scientific Review Generation with External Knowledge." The study aims to generate scientific reviews using external knowledge sources. The study compares the performance of two models, MAMORX and D'Arc, in generating scientific reviews. The results show that MAMORX outperforms D'Arc in terms of accuracy and relevance. The document also includes a table summarizing the comparison of the two models.
+Summary: Error: Model inference returned None
+
+Extracting structured data...
+=====================
+BASE:  torch.Size([1, 256, 1280])
+PATCHES:  torch.Size([6, 100, 1280])
+=====================
+ {
+  "title": "The title of the document",
+  "authors": ["List of authors"],
+  "main_topic": "Main research topic",
+  "key_findings": "Key findings or contributions"
+}
+
+The document is structured with a clear and concise layout, using HTML tags for headings and paragraphs. The text is organized into sections with clear headings, and the content is presented in a readable format. The document appears to be a research paper or a report, with a focus on the analysis of multi-modal scientific reviews. The use of HTML tags and the structure of the document suggest that it is intended for a specific audience, likely researchers or professionals in the field of multi-modal scientific reviews.
+Structured data: {'error': 'Model inference returned None'}
+
+================================================================================
+EXECUTION COMPLETED SUCCESSFULLY
+================================================================================
+Compression ratio achieved: 10.105263157894736
+QA answer available: True
+Summary available: True
+Structured data available: True
+GPU cache cleared
+Starting latent_representations.py execution...
+DEBUG: Using test image path: '/work/projects/mhahsler/course_recomm/allocation001/vision-encode/DeepSeek-OCR-Web-UI/images/mamorx.png'
+Using device: cuda
+GPU Memory - Total: 79.3GB, Allocated: 0.0GB, Cached: 0.0GB
+Attempting to load model with Flash Attention 2...
+Flash attention failed, falling back to regular attention: Using `low_cpu_mem_usage=True` or a `device_map` requires Accelerate: `pip install 'accelerate>=0.26.0'`
+Loading model with regular attention...
+✓ Successfully loaded model with regular attention
+GPU Memory after model loading - Allocated: 6.3GB, Cached: 6.3GB
+Model is on device: cuda:0
+Running DeepSeek-OCR inference...
+=====================
+BASE:  torch.Size([1, 144, 1280])
+PATCHES:  torch.Size([6, 100, 1280])
+=====================
+<|ref|>sub_title<|/ref|><|det|>[[245, 40, 911, 74]]<|/det|>
+# MAMORX: Multi-Modal Scientific Review 
+
+<|ref|>sub_title<|/ref|><|det|>[[380, 80, 712, 109]]<|/det|>
+## External Knowledge 
+
+<|ref|>text<|/ref|><|det|>[[20, 95, 180, 116]]<|/det|>
+University of Colorado 
+
+<|ref|>text<|/ref|><|det|>[[30, 118, 170, 137]]<|/det|>
+Boulder 
+
+<|ref|>text<|/ref|><|det|>[[375, 100, 714, 120]]<|/det|>
+Pawan Tachayotin, Mike Wang, Tong Zeng, Bradley Sides, Daniel Acuna 
+
+<|ref|>text<|/ref|><|det|>[[400, 122, 690, 140]]<|/det|>
+University of Colorado Boulder 
+
+<|ref|>sub_title<|/ref|><|det|>[[130, 174, 220, 192]]<|/det|>
+### Background 
+
+<|ref|>text<|/ref|><|det|>[[50, 199, 350, 260]]<|/det|>
+The growing amounts of scientific literatures increase the burden of reviewers. Recent studies have explored AI-generated scientific paper reviews. While models like GPT-4 show promise, researchers hold mixed views on this approach. 
+
+<|ref|>sub_title<|/ref|><|det|>[[50, 275, 199, 292]]<|/det|>
+#### Major challenges to AI reviews: 
+
+<|ref|>text<|/ref|><|det|>[[50, 293, 280, 309]]<|/det|>
+- Factual inaccuracies and outdated information 
+
+<|ref|>text<|/ref|><|det|>[[50, 310, 199, 325]]<|/det|>
+- Reference fabrication 
+
+<|ref|>text<|/ref|><|det|>[[50, 326, 199, 342]]<|/det|>
+- Weak context understanding 
+
+<|ref|>text<|/ref|><|det|>[[50, 343, 199, 359]]<|/det|>
+- Inability to provide personalized, constructive feedback 
+
+<|ref|>text<|/ref|><|det|>[[50, 360, 333, 375]]<|/det|>
+Paper review processes as done by human reviewers often integrate 
+
+<|ref|>text<|/ref|><|det|>[[50, 376, 163, 392]]<|/det|>
+- textual analysis, 
+
+<|ref|>text<|/ref|><|det|>[[50, 393, 183, 408]]<|/det|>
+- visual interpretation 
+
+<|ref|>text<|/ref|><|det|>[[50, 409, 183, 425]]<|/det|>
+- citation assessment 
+
+<|ref|>text<|/ref|><|det|>[[50, 426, 163, 441]]<|/det|>
+- external knowledge 
+
+<|ref|>text<|/ref|><|det|>[[50, 460, 350, 504]]<|/det|>
+Recent advances in multimodal AI models (processing text, images, and graphs) and multi-agent systems with external knowledge access offer promising new approaches to address these limitations. 
+
+<|ref|>sub_title<|/ref|><|det|>[[130, 511, 200, 528]]<|/det|>
+### Methods 
+
+<|ref|>text<|/ref|><|det|>[[50, 535, 333, 588]]<|/det|>
+Multi-agent framework led by a Leader Agent that coordinates specialized agents 
+
+<|ref|>text<|/ref|><|det|>[[50, 589, 333, 633]]<|/det|>
+- All agents have access to the full text of the paper
+- Each agent has different system prompt-driven task 
+
+<|ref|>text<|/ref|><|det|>[[50, 634, 333, 678]]<|/det|>
+- Impact Agent: Evaluates significance and novelty
+- Experiments Agent: Critiques methodology, datasets, and experimental design 
+
+<|ref|>text<|/ref|><|det|>[[50, 679, 310, 694]]<|/det|>
+- Clarity Agent: Assesses organization, structure, and presentation 
+
+<|ref|>sub_title<|/ref|><|det|>[[50, 710, 150, 725]]<|/det|>
+### Novel components 
+
+<|ref|>text<|/ref|><|det|>[[50, 727, 350, 755]]<|/det|>
+- Novelty Assessment: Queries Semantic Scholar to evaluate paper originality 
+
+<|ref|>text<|/ref|><|det|>[[50, 756, 333, 800]]<|/det|>
+- Generates queries, builds database of related papers
+- Removes papers already cited by subject paper
+- Performs pairwise novelty assessment against relevant papers 
+
+<|ref|>text<|/ref|><|det|>[[50, 801, 333, 845]]<|/det|>
+- Figure Critic Assessment: Analyzes visual elements using vision-capable LLMs 
+
+<|ref|>text<|/ref|><|det|>[[50, 846, 333, 890]]<|/det|>
+- Extracts figures and captions using PaperMage
+- Evaluates consistency with paper title/abstract
+- Provides clarity assessment and descriptive summaries 
+
+<|ref|>text<|/ref|><|det|>[[50, 911, 333, 940]]<|/det|>
+- Domain Huacheng: Analyzes visual elements using vision-capable LLMs 
+
+<|ref|>sub_title<|/ref|><|det|>[[350, 174, 580, 192]]<|/det|>
+### Table 1. Comparison of example reviews 
+
+<|ref|>table<|/ref|><|det|>[[350, 199, 978, 300]]<|/det|>
+<table><tr><td></td><td>Example Review</td><td>Table 2. Comparison of review systems using Elo ratings across different dimensions. Scores are presented as mean ± standard error of the mean.</td></tr><tr><td>System Reviewer</td><td>The paper presents an interesting approach but lacks sufficient experimental validation. The proposed algorithm seems similar to Smith et al. (2023), Figure 2 is unclear and needs better labeling. The work shows some novelty but requires more comparison with recent literature. The theoretical foundation appears sound, but practical implications are not fully explored. Overall, major revisions are needed.</td><td>Model</td><td>Technical Quality</td><td>Constructive- ness</td><td>Clarity</td><td>Overall Quality</td><td>Combined Score</td><td>Style-Adjusted Score</td></tr><tr><td>Prompt Method</td><td>The paper introduces a new method for image classification. The authors claim improved accuracy over existing methods. The methodology seems sound, but more details would be beneficial. The conclusion summarizes the main findings effectively.</td><td>Human Reviewer</td><td>1208 ± 6</td><td>1236 ± 7</td><td>1255 ± 8</td><td>1322 ± 11</td><td>1278 ± 11</td><td>1112 ± 5</td></tr><tr><td>Liang et al.</td><td>The proposed image classification method shows potential. The authors provide a detailed explanation of their algorithm and compare it to existing approaches. The results indicate improved performance, but more extensive experiments on diverse datasets would strengthen the claims. The paper is well-structured and written clearly.</td><td>Prompt-based</td><td>1419 ± 4</td><td>1402 ± 4</td><td>1429 ± 5</td><td>1482 ± 7</td><td>1449 ± 8</td><td>1336 ± 12</td></tr><tr><td>D'Arcy et al.</td><td>The paper presents a novel approach to image classification using a hybrid neural network architecture. The authors provide a comprehensive literature review, situating their work within the current state-of-the-art. The methodology is well-explained, with clear justifications for design choices. The experimental results are promising, showing significant improvements over baseline methods. However, the discussion of limitations could be expanded, and future work directions could be more clearly outlined. The paper's structure and writing are commendable, facilitating easy understanding of the complex concepts.</td><td>D'ACO MAMORX (Ours)</td><td>1810 ± 4</td><td>1787 ± 5</td><td>1769 ± 6</td><td>1677 ± 9</td><td>1733 ± 9</td><td>1955 ± 8</td></tr></table>
+
+<|ref|>table<|/ref|><|det|>[[350, 300, 978, 300]]<|/det|>
+<table><tr><td></td><td>Model</td><td>Technical Quality</td><td>Constructive- ness</td><td>Clarity</td><td></td><td>Overall Quality</td><td>Combined Score</td><td>Style-Adjusted Score</td></tr></table>
+
+<|ref|>table<|/ref|><|det|>[[350, 300, 978, 400]]<|/det|>
+<table><tr><td></td><td>Model</td><td>Technical Quality</td><td>Constructive-ness</td><td>Clarity</td><td>Overall Quality</td><td>Combined Score</td><td>Style-Adjusted Score<br/>Reviewers</td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td><td>1236 ± 7</td><td></td><td>1255 ± 8</td><td>1322 ± 11</td><td>1278 ±11</td><td>1112 ± 5</td></tr><tr><td>Prompt-based</td><td>1419 ± 4</td><td>1402 ± 4</td><td></td><td>1429 ± 5</td><td>1482 ± 7</td><td>1449 ±8</td><td>1336 ± 12</td></tr><tr><td>Liang et al.</td><td>The proposed image classification method shows potential.</td><td>The authors provide a detailed explanation of their algorithm and compare it to existing approaches. The results indicate improved perfor-mance, but more extensive experiments on diverse datasets would strengthen the claims. The paper is well-structured and writ-ten clearly.</td><td>Prompt-based</td><td>1419 ± 4</td><td>1402 ± 5</td><td>1429 ± 5</td><td>1482 ± 7</td><td>1449 ±9</td></tr><tr><td>D'Arcy et al.</td><td>The paper presents a novel approach to im-age classification using a hybrid neural network architecture. The authors provide a comprehensive literature review, situating theirwork within the current state-of-the-art. The methodology is well-explained, with clear justificationsfor design choices. The experimental results are promising, showing significant improvements over baseline methods. However, the discuss-ion of limitations could be expanded, and future work directions could be more clearly outlined. The paper's struc-ture and writing are commendable, facilitating easy understanding of the complex concepts.</td><td>D'ACOMAMORX (Ours)</td><td>1810 ± 4</td><td>1787 ±5</td><td>1769 ± 6</td><td>1677 ± 9</td><td>1733± 9</td><td>1955 ± 8</td></tr></table>
+
+<|ref|>table<|/ref|><|det|>[[348, 400, 978, 400]]<|/det|>
+<table><tr><td></td><td>Model</td><td>Technical quality</td><td>Constructive- ness</td><td>Clarity</td><td>Overall Quality</td><td>Combined Score<br/>Reviewers</td><td>Style-Adjusted Score</td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td><td>1236 ± 8</td><td></td><td>1255 ± 8</td><td>1322 ± 11</td><td>1279 ± 11</td><td>1112 ± 5</td></tr><tr><td>Prompt-based</td><td>1419 ±4</td><td>1402 ± 4</td><td></td><td>1429 ± 5</td><td></td><td>1482 ± 7</td><td>1449 ± 8</td></tr><tr><td>Liang et al.</td><td>The proposed image classification method shows potential. <br/>The authors provide a detailed explanation of their algorithm and compare it to existing approaches. The results indicate improvement performance, but more extensive experiments on diverse datasets would strengthen the claims. The paper is well-structured, and writing are commendable, facilitating easy understanding of the complex concepts.</td><td>Prompt-based</td><td>1419 ± 4</td><td>1402 ± 5<td>1429 ± 5</td><td>1482 ± 7</td><td>1449 ± 9</td></td></tr><tr><td>D'Arcy et al.</td><td>The paper presents a novel approach to imag e classification using a hybrid neural network architecture. The authors provide a comprehensive literature review, situating their works within the current state-of-the-art. The methodology is well-explained, with clear justifications of design choices. The experimental results are promising, showing significant improvements over baseline methods. However, the discussions of limitations could be expanded, and future work directions could be more clearly outlined. The paper's structur and writing are commendable, facilitating easy understanding of the complex concepts.</td><td>D'ACoMAMORX (Ours)</td><td>1810 ± 4</td><td>1787 ±</td><td>1769 ± 6</td><td>1677 ± 9</td><td>1733 ±9</td><td>1955 ± 8</td></tr></table>
+
+<|ref|>table<|/ref|><|det|>[[3480, 400, 978, 400]]<|/det|>
+<table><tr><td></td><td>Model<td>Technical Quality</td><td>Constructive- ness</td><td>Clarity</td><td>Overall Quality</td><td>Overall Quality</td><td>Overall Quality</td><td>Overall Quality</td><td>Overall Quality</td></td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td><td>1236 ± 9</td><td></td><td>1255 ± 8</td><td>1322 ± 11</td><td>1277 ± 11</td><td>1112 ± 5</td></tr><tr><td>Prompt-based</td><td>1418 ± 4</td><td>1402 ± 4</td><td></td><td>1429 ± 5<td>1482 ± 7</td><td>1449 ± 8</td><td>1336 ± 11</td></td></tr><tr><td>Liang et al.</td><td>The proposed image classification method shows potential. &lt;br/&gt;The authors provide a detailed explanation of their algorithm and compare it to existing approaches. The results indicate improvements over baseline methods. However, the discussion of limitations could be expanded, and future work directions should be more clearly outlined. The paper's structure and writing are commendable, facilitating easy understanding of complex concepts.</td><td>Prompt-based</td><td>1418 ± 4</td><td>1402 ± 5</td><td>1429 ± 5</td><td></td><td>1482 ± 7</td><td>1448 ± 8</td></tr><tr><td>D'Arcy et al.</td><td>The paper presents a novel approach to Image classification using a hybrid neural network architecture. The authors provide a comprehensive literature review, situating theirworks within the current state-of-the-art. The methodology is well-explained, with clear justificationsof design choices. The experimental results are promising, showing significant improvements over baseline methods. However, the dis-cussions of limitations could be expanded, and future work directions could be more clearly outlined. The paper's structural and writing are commendable, facilitating easy understanding of the complex concepts.</td><td>D'AComAMORX (Ours)</td><td>1810 ± 4</td><td>1787 ±6</td><td>1769 ± 6</td><td>1677 ± 9</td><td>1733 ±8</td><td>1955 ± 8</td></tr></table>
+
+<|ref|>table<|/ref|><|det|>[[3480: 400, 978, 400]]<|/det|>
+<table><tr><td></td><td>Model</td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td></tr><tr><td>Prompt-based</td><td>1418 ± 4</td></tr><tr><td>Liang et al.</td><td>The proposed image classification method shows potential.&lt;br/&gt;The authors provide a detailed explanation of their algorithm and compare it with existing approaches. The results indicate improvements over baseline methods. However, the discussion of limitations could be extended, and future work directions should be more clearly outlined. The paper's structure and writing are commendably, facilitating easy understanding of the complex concepts.</td><td>Prompt-based</td><td>1418 ± 4</td></tr><tr><td>D'Arcy et al.</td><td>The paper presents a novel approach to Im age classification using a hybrid neural network architecture. The authors provide a comprehensive literature review, situating their research within the current state-of-the-art. The methodology is well-explained, with clear justifications and design choices. The experimental results are promising, showing significant improvements over baseline methods. However, the discu-sions of limitations could be expanded, and future work directions should be more clearly outlined. The paper's structural and writing are commendably, facilitating easy understanding of the complex concepts.</td><td>D'ACOMAMORX (Our)</td><td>1810 ± 4</td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td></tr><tr><td>Prompt-based<td>1418 ± 4</td></td></tr><tr><td>Liang et al.</td><td>The proposed image classification method shows potential.<br/>The authors provide a detailed explanation of their algorithm and compare it with existing approaches. The results indicate improvement performance, but more extensive experiments on diverse datasets would strengthen the claim. The paper is well-structured, and writing are commendable, facilitating easy understanding of the complex concept-s.</td><td>Prompt-based</td><td>1418 ± 4</td></tr><tr><td>D'Arcy e al.</td><td>The paper presents a novel approach to image classification using a hybrid neural network architecture.<br/>The authors provide a comprehensive literature review, situating their research within the current state-of-the-art. <br/>The methodology is well-explained, with clear justifications of design choices. The experimental results are promising. showing significant improvements over baseline methods. However, the discussions of limitations could be expanded, and future works directions should be more clearly outlined. The paper's structural and writing are commendably, facilitating easy understand-ing of the complex concepts.</td><td>D'ACOMAMORX (Our)</td><td></td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td></tr><tr><td>Prompt-based<br/>Liang et al.</td><td>1418 ± 4</td></tr><tr><td>D'Arcy et al.</td><td></td><td>The proposed image classification method shows potential.&lt;br/&gt;The author provides a detailed explanation of their algorithm and compare it with existing approaches. The results indicate improvements over baseline method-s. However, the discussion of limitations could be expanded, and future work directions should be more clearly out-lined. The paper's structural and writing are commendably, facilitating easy understanding of the complex concepts. &lt;br/&gt;The experimental results are promising, showing significant improvements over baseline methods. However, the discussions of limitations couldbe expanded, and future work directions should be more clearly outlined. The paper's structural and writing are commended, facilitating easy understanding of the complex concepts.</td><td>D'ACOMAMORX (our)</td><td>1810 ± 4</td></tr><tr><td>Human Reviewer</td><td>1208 ±6</td></tr><tr><td>Prompt-based</td><td>1418 ± 4</td></tr><tr><td>Ling et al.</td><td>The proposed image classification method shows potential.&lt;br/& gt;The authors provide a detailed explanation of their algorithm and compare it with existing approaches. The results indi-cate improvements over baseline methods. However, the discussion of limitations could be expanded, and future work directions would be more clearly outlined. The paper's structural and writing are commendably, facilitating easy understanding of complex concepts.</td><td>D'ACOMAMORX (our)</td><td>1810±4</td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td></tr><tr><td>Prompt based</td><td>1418 ± 4</td></tr><tr><td>Liang et al.</td><td>The paper presents a novel approach to Image classification using a hybrid neural network architec-ture. The authors provide a comprehensive literature review, situating their research within the current state-of-the art. The methodology is well-explained, with clear justifications and design choices. The experimental results areresponsive to the proposed approach.</td><td>D'ACOMAMORX (our)</td><td>1810 ± 5</td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td></tr><tr><td>Prompt-based,</td><td>1418 ± 4</td></tr><tr><td>Liang et al.</td><td>The authors provide a detailed explanation of their algorithm and compare it with existing approaches. The results indicateimprovements over baseline methods. However, the discussion of limitations could be expanded, and future work directions shouldbe more clearly outlined. The paper's structural and writing are commendably, facilitating easy understanding of thecomplex concepts.</td><td>D'ACOMAMORX (our)</td><td></td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td></tr><tr><td colspan="2"></td><td>The proposed image classification method shows potential.&lt;br/&gt;The paper provides a detailed explanation of their algorithm and compare it with existing approaches. The results indicate improvements over baselinemethods. However, the discussion of limitations could be expanded, and future work directions should be more clearlyoutlined. The paper's structural and writing are commendably, facilitating easy understanding of the complex concepts.&lt;br/&gt;The experimental results are promising, showing significant improvements over baseline methods.<br/>However, the discussions of limitations could be expanded, and future work directions should be more clearly outlined. The paper'sstructural and writing are commendably, facilitating easy understanding of the complex concepts.</td><td>D'AComAMORX (our)</td><td></td></tr><tr><td>Human Reviewer</td><td>1208 ±6</td></tr><tr><td>Prompt-based</td></tr><tr><td>Liang et al.</td><td>The proposed image classification method shows potential.  The authors provide a detailed explanation of their algorithm and compare it with existing approaches. The results indicate improvementsover baseline methods. However, the discussion of limitations could be expanded, and future work directions should bemore clearly outlined. The paper's structural and writing are commendably, facilitating easy understanding of the complexconcepts.</td><td>D'ACOMAMORX (our)</td><td></td></tr><tr><td></td><td>1810 ± 4</td></tr><tr><td>Human Reviewer</td><td>1208 ± 5</td></tr><tr><td>Prompt-based</td><td>1418 ± 4</td></tr><tr><td>Liang e al.</td><td>The proposed image classification method shows potential.&lt;br/&gt;&lt;br/&gt;The authors provide a detailed explanation of their algorithm and compare itwith existing approaches. The results indicate improvements over baseline methods. However, the discussion of limitations could beexpanded, and future work directions should be more clearly outlined. The paper's structural and writing arecommendably, facilitating easy understanding of the complex concepts.</td><td>D'ACOMAMORX(our)</td><td></td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td></tr></table>
+
+<|ref|>table<|/ref|><|det|>[[348, 400, 978, 600]]<|/det|>
+<table><tr><td></td><td>Model</td><td>Technical Quality</td><td>Constructive-</td><td>Clarity</td><td>Overall Quality</td><td>Overall Quality</td><td>Overall Quality</td><td>Overall Qualit</td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td><td>1236 ± 6</td><td></td><td>1255 ± 8</td><td>1322 ± 11</td><td>1276 ± 11</td><td>1112 ± 5</td><td></td></tr><tr><td>Prompt-based</td><td>1418 ± 4</td><td>1402 ± 5</td><td></td><td>1429 ± 5</td><td>1482 ± 7</td><td>1448 ± 8</td><td>1336 ± 11</td><td></td></tr><tr><td>Liang et al.</td><td>The proposed image classification method shows potential. (The authors provide a detailed explanation of their algorithm and compare it with existing approaches. The results indicate improved performance, but more extensive experiments on diverse datasets would strengthen the claim. The paper is well-structured and writ-ten clearly.)</td><td>The authors provide a detailed explanation of their algorithm and compare it with existing approaches. The resul-tin indicate improvements over baseline methods. However, the discussion of limitations could be expanded, and future work direction-s should be more clearly outlined. The paper's structural and writing are commendably, facilitating easy understanding ofthe complex concepts.</td><td>Prompt-based</td><td>1418 ± 4</td><td>1402 ±5</td><td>1429 ± 5</td><td>1482 ± 7</td><td>1449± 8</td><td>1336 ± 12</td></tr><tr><td>D'Arcy et al. (The authors provide a detailed explanation of their algorithm and compare it with existing approaches. The resul-</td><td>The proposed image classification method shows potential. (The authors provide a detailed explanation of their algo-rithm and compare it with existing approaches. The results indicate improvements over baseline methods. However, the discussionof limitations could be expanded, and future work directions should be more clearly outlined. The paper's structuraland writing are commendably, facilitating easy understanding of the complex concepts.</td><td>The proposed image classification method shows potential. (The authors provide a detailed explanation of the algorithm and compare it with existing approaches. The results indicate improvements over baseline methods. However, the discussions of limitations could be expanded, and future work directions should be more clearly outlined.</td><td>The proposed image classification method shows potential. (The authors provide a detailed explanation of th-e algorithm and compare it with existing approaches. The results indicate improvements over baseline methods. However, the discussi-on of limitations could be expanded, and future work directions should be more clearly outlined. The paper's struc-ture and writing are commendably, facilitating easy understanding of the complex concepts.</td><td>The proposed image classification meth-</td><td></td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td><td>1236 ± 10</td><td></td><td>1255 ± 8</td><td>1322 ± 11</td><td>1275 ± 11</td><td>1112 ± 5</td><td></td></tr><tr><td>Prompt-based</td></tr><tr><td>Liang et al.</td><td>The proposed Image classification method shows potential. (The authors provide a detailed explanation of their algorithm and compare it with exis-ting approaches. The results indicate improvements over baseline methods. However, the discussion of limitations could be expanded.</td><td>The proposed image classification method shows potential. (The authors provide a detailed explanation oftheir algorithm and compare it with existing approaches. The results indicate improvements over baseline methods. However, the discu-sion of limitations could be expanded, and future work directions should be more clearly outlined. The paper's structur-ing and writing are commendably, facilitating easy understanding of the complex concepts.</td><td>The proposed image clas-sification method shows potential. (The authors provide a detailed explanation of their algorithm and compare it with existing ap-proaches. The results indicate improvements over baseline methods. However, the discussion of limitations could be expanded,</td><td>The proposed image classification method shows potential. (The authors provide a detailed explanation of their al-gorithm and compare it with existing approaches. The results indicate improvements over baseline methods. However, the discussions</td><td>The proposed image classification method shows potential. (The authors provide a detailed explanation of their algorithms and compare it with existing approaches. The results indicate improvements over baseline methods. However, the discussion</td><td>The proposed image classification method shows potential. (The authors provide a detailed explanation of their algorith-m and compare it with existing approaches. The results indicate improvements over baseline methods. However, the discussion.</td></tr><tr><td>D'Arcy et al.</td><td>The proposed image classification method shows potential. (The authors provide a detailed explana-tion of their algorithm and compare it with existing approaches. The results indicate improvements over baseline methods. However.</td><td>The proposed image classification method shows potential. (The authors provide a detailed explanation of there algorithm and compare it with existing approaches. The results indicate improvements over baseline methods. However, the dis-cussion of limitations could be expanded, and future work directions should be more clearly outlined. The paper's struction and writing are commendably, facilitating easy understanding of the complex concepts.</td><td>The proposed image classifica-tion method shows potential. (The authors provide a detailed explanation of their algorithm and compare it with existing approach-s. The results indicate improvements over baseline methods. However, the discussion of limitations could be expanded, but the discussion of limitations could be expanded, and future work directions should be more clearly outlined. The pa-per's structure and writing are commendably, facilitating easy understanding of the complex concepts.</td><td>The proposed image classificatio-n method shows potential. (The authors provide a detailed explanation of their algorithm and compare it with existing approache-s. The results indicate improvements over baseline methods. However, the discussion of limitations could be expanded. The paper's structure and writing are commendably, facilitating easy understanding of the complex concepts. The experimental results are promising, showing significant improvements over baseline methods. However, the discussions of limi-tations could be expanded, and future work directions should be more clearly outlined. The paper's structural and writ-ing are commendably, facilitating easy understanding of the complex concepts.</td><td>The proposed image classification method showsthat potential. (The authors provide a detailed explanation of their algorithm and compare it with existing approaches.</td><td>The proposed image classification method shows that potential. (The authors provide a detailed explanation of their algorithm and compare it with existing approaches. (The results indicate improvements over baseline methods. However, the discussion of limitations could be expanded, and future works directions should be more clearly outlined. The paper's structure and writing are commendably, facilitating easy understand-ing of the complex concepts.</td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td><td>1236 ± 11</td><td></td><td>1255 ± 8</td><td>1322 ± 11</td><td>1274 ± 11</td><td>1112 ± 5</td><td></td></tr><tr><td>Prompt-based</td><tr><td>Liang et al.</td><td>The proposed image classification method shows that potential. (The authors provide a detailed explanation oftheir algorithm and compare it with existing approaches. The results indicate improvements over baseline methods. However, thediscussion of limitations could be expanded, and future work directions should be more clearly outlined. The paper’s structure and writing are commendably, facilitating easy understanding of the complex concepts.</td><td>The proposed Image classification method shows that potential. (The authors provide a detailed explanation of their algorithm and compare itwith existing approaches. The results indicate improvement over baseline methods. However, the discussion of limitations could be expanded, and future work directions should b- more clearly outlined. The paper's structure and writing are commendably, facilitating easy understanding of the com- plex concepts.</td><td>The proposed Image classification method shows that potential. (The authors provide a detailed explana-tion of their algorithm and compare it with existing ap-proaches. The results indicate improvements over baseline methods, but the discussion of limitations could be expanded, and future work directions should be more clearly outlined, and the paper's structure and writing are commendably, facilitating easy understanding of the complex concepts.</td><td>The pro-posed Image classification method shows that potential. (The authors provide a detailed explanation of their algorithm and compareit with existing approaches. The results indicate improvements over baseline methods, but the discussion of limitations could be expanded, and the paper's structure and writing are commendably, facilitating easy understanding of the complex concepts, and the experimental results are promising, showing significant improvements over baseline methods. However, the discussions of limitations could b-expanded, and future work directions should be more clearly outlined. The paper's structure and writing are commend-ably, facilitating easy understanding of the complex concepts.</td><td>The proposed Image classification method shows thatpotential. (The authors provide a detailed explanation of their algorithm and compare it with existing ap-proaches, The results indicate improvements over baseline methods, but the discussion of limitations could be expanded, and future works directions should be more clearly outlined, and the paper's structure and writing are commend-ably, facilitating easy understanding of the complex concepts.</td></tr><tr><td>D'Arcy et al.</td><td>The proposed Image classification method shows that potential. (The authors provide a detailed explanation oftheir algorithm and compare itwith existing approaches. The results indicate improvements over baseline methods, but the discussion of limitations could be expanded. The paper’s structure and writing are commend-ably, facilitating easy understanding of the complex concepts.</td><td>The pro-posed Image classification method showsthat potential. (The authors provide a detailed explanation of their algorithm and compareit with existing ap-proaches. The results indicate improvements over baseline methods, but the discussion of limitationscould be expanded, and future work directions should be more clearly outlined. The paper’s structure and writ-ing are commend-ably, facilitating easy understanding of the complex concepts.</td><td>The pro-posed image classification method shows that potential. (The authors provide a detailed explanation of their algorithm and compareitwith existing ap-proaches. The results indicate improvements over baseline methods, but the discussion of limitations couldbe expanded, and future work directions should be more clearly outlined. The paper’s structure and writingare commend-ably, facilitating easy understanding of the complex concepts.</td><td>The pro-posed image clas-sification method shows that potential. (The authors provide a detailed explanation of their algorithm and compareit with exis-ting approaches. The results indicate improvements over baseline methods, but the discussion of limitations could be expanded, but the discussion of limitations could be expanded, and future works directions should be more clearly outlined. The pa-per’s structure and writing are commend-ably, facilitating easy understanding of the complex concepts.</td></tr><tr><td colspan="2"></td><td>The proposed Image classification method shows that potential. (The authors provide a detailed explanation oftheir algorithm and compare it with existing ap-proaches. The results indicate improvements over baseline methods, butthe discussion of limitations could be expanded, and future work directions should be more clearly outlined. The paper’ s structure and writing are commend-ably, facilitating easy understanding of the complex concepts.</td><td>The paper’s structure and writing are commend-ably, facilitating easy understanding of the complex concepts. The experimental results are promising, showing significant improvements ov-er baseline methods. However, the discussions of limitations could be expanded, and future work directions should be mor-ely clearly outlined. The paper’s structure and writing are commend-ably, facilitating easy understanding of the complex con-cepts.</td><td>The paper’s structure and writing are commend-ably, facilitating easy understanding of complex concepts.</td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td><td>1235 ± 9</td><td></td><td>1255 ± 8</td><td>1322 ± 11 1276 ± 11</td><td>1112 ± 5</td><td></td></tr><tr><td>Prompt based</td><td>1418 ± 4</td><td>1402 ± 5</td><td></td><td>1428 ± 5</td><td>1482 ± 7</td><td>1448 ± 8</td><td></td></tr><tr><td>Liang et al.</td><td>The proposed Image classification method shows that potential. (The authors provide a detailled explanation of their algorithm and compare it with existing ap-proaches. The results indicate improvements over baseline method-s. However, the discussion of limitations could be expanded.</td><td>The proposed Image classification method shows that potential. (The authors provide a detailed explanationof their algorithm and compare it with existing approaches. The results indicate improvements over baseline methods. However,the discussion of limitations could be expanded, and future work directions should be more clearly outlined. The pa-pers structure and writing are commend-ably, facilitating easy understanding of the complex concepts.</td><td>The proposal-based Image classification method shows that potential. (The authors provide a detailed explanation of their algorithm and compare-it with existing approaches. The results indicate improvements over baseline methods. However, the discussion of limitations couldbe expanded, and future work directions should be more clearly outlined. The pa-pers structure and writing is commend-ably, facilitating easy understanding of the complex concepts.</td><td>The proposal-based Image classification meth-od shows that potential. (The authors provide a detailed explanation of their algorithm and compare it with existing ap-proach-s. The results indicate improvements over baseline methods, but the discussion of limitations could be expanded, and fut-ure work directions should be more clearly outlined. The paper’s structure and writing are commend-ably, facilitating easy understanding of complex concepts.</td><td>The proposal-based Image classification method shows that potential. (The authors providea detailed explanation of their algorithm and compare it with existing ap-proaches. The results indicate improvements over baselinemethods, but the discussion of limitations could be expanded, and future work directions should be more clearly outlined.The paper’s structure and writing are commend-ably, facilitating easy understanding of the complex concepts. </td></tr><tr><td>D'Arcy et al.</td><td>The proposed Image classification method shows thatpotential. (The authors provide a detailed explanationof their algorithm and compare it with existing ap-proaches. The results indicate improvements over baseline methods, b-but the discussion of limitations could be expanded, and future work directions should be more clearly outlined. The papers structure and writing are commend-ably, facilitating easy understanding of the complex concepts.</td><td>Theproposed Image classification method shows that potential. (The authors provide a detailed explanation of their algorithm and com-pare it with existing approaches. The results indicate improvements over baseline methods, but the discussion of limitations could be expand-ed, and future work directions should be more clearly outlined. The paper’s structure and writing are commenda-bly, facilitating easy understanding of the complex concepts.</td><td>The proposed Image classification method shows that potential with existing approaches. The results indicate improvements over baseline methods, but the discussion of limitations could be expan-ded, and future work directions should be more clearly outlined. The paper’s structure and writing are commended-ably, facilitating easy understanding of the complex concepts.</td><td>The proposed Image classification method showsthat potential. (The authors provide a detailed explanation of their algorithm and compare it with existing ap-pro-aches. The results indicate improvements over baseline methods, but the discussion of limitations could be expanded, an-d future work directions should be more clearly outlined. The paper’s structure and writing are commend-ably facilitating easy understanding of the complex concepts.</td></tr><tr><td>Human Reviewer</td><td>1208 ± 6</td></tr><tr><td>Prompt-based </td><td>1418 ± 4</td><td>1402 ± 5</td><td></td><td>1427 ± 9</td><td>1322 ± 11</td><td>1275 ± 11</td><td></td></tr><tr><td>Liang et al.</td><td>The proposed Image classification method showsthat potential. (The authors provide a detailed explanationof their algorithm and compare it with existing ap-proaches, The results indicate improvements over baseline methods, b-but the discussion of limitations could be expanded, and fut-ure work directions should be more clearly outlined.The paper’s structure and writing are commend-ably, facili-ating easy understanding of the complex concepts.</td><td>The proposed Image classification method shows that potential. ( The authors provide a detailed explanation of their algorithm and compare it with existing ap-proaches. The results indi-cate improvements over baseline methods, but the discussion of limitations could be expanded, and future work directions should b- more clearly outlined.</td><td>The proposed Image classification method shows that potential. (The authors provide a detailed explanation o-their algorithm and compare it with existing ap-proaches. The results indicate improvements over baseline methods, but th-e discussion of limitations could be expanded, and future work directions should be more clearly outlined. The paper s-tructure and writing are commend-ably, facilitating easy understanding of the complex concepts.</td><td>The proposed image classification method shows that potential. (The authors provide a detailed explanationof their algorithm and compare itwith existing ap-proaches. The results indicate improvements over baseline methods, but the discussion of limitationscouldbe expanded, and future work directions should be more clearly outlined. The paper’s structure and writ-</td></tr><tr><td>D'Arcy et al.</td><td>The proposed Image classification method shows that that potential. (The authors provide a detailed explanation of their algorithm and compare it with existing ap-approaches. The results indicate improvements over baseline methods, but the discussion of limitations could be expanded,</td><td>The proposed Image classification method shows that that potential. (The authors provide a detailed explanationof their algorithm and compare it with existing ap-pro-aches. The results indicate improvements over baseline methods. But the discussion of limitations could be expanded, and future work directions should be more clearly outlined. The p-</td><td>The proposed Image classification method shows that that potential. (The authors provide a detailed explanation o-their algorithm and compare it with existing approaches. The results indicate improvements over baseline methods, but the discussion of limitations couldbe expanded, and fut-</td><td>The proposed Image classification method shows that that potential. (The authors provide a==================================================
+image size:  (1584, 1224)
+valid image tokens:  0
+output texts tokens (valid):  8190
+OCR inference failed: division by zero
+
+OCR Result (first 500 chars):
+Loaded OCR result from ./output/result.mmd
+![](images/0.jpg)
+
+
+<center>Figure 1: Architecture of the Recommender System Pipeline </center>  
+
+
+models to recommend or offer useful data for a personalized user experience. It also makes the LLM a goal- based agent, ensuring a robust recommendation and personalized user experience.  
+
+
+To bridge the technical and user- facing aspects of the system, the LLM interprets user prompts and synthesizes outputs from the recommender system into a parsed and formulated interface. The LLM with the chec
+================================================================================
+Extracting embeddings...
+Error extracting embeddings: Got unsupported ScalarType BFloat16
+Performing visual QA...
+DEBUG: About to call QA with test_image: '/work/projects/mhahsler/course_recomm/allocation001/vision-encode/DeepSeek-OCR-Web-UI/images/mamorx.png'
+DEBUG: QA with image_path: '/work/projects/mhahsler/course_recomm/allocation001/vision-encode/DeepSeek-OCR-Web-UI/images/mamorx.png'
+=====================
+BASE:  torch.Size([1, 256, 1280])
+PATCHES:  torch.Size([6, 100, 1280])
+=====================
+ The main topic of this document is a multi-modal scientific review of the external knowledge of the external knowledge of the external knowledge of the external knowledge of the external knowledge of the external environment.
+QA Answer: Error: Model inference returned None...
+Generating summary...
+DEBUG: About to call guided_generation with test_image: '/work/projects/mhahsler/course_recomm/allocation001/vision-encode/DeepSeek-OCR-Web-UI/images/mamorx.png'
+=====================
+BASE:  torch.Size([1, 256, 1280])
+PATCHES:  torch.Size([6, 100, 1280])
+=====================
+The document provides an overview of a study titled "Multi-Modal Scientific Review Generation with External Knowledge." The study aims to generate scientific reviews using external knowledge sources. The study compares the performance of two models, MAMORX and D'Arc, in generating scientific reviews. The results show that MAMORX outperforms D'Arc in terms of accuracy and relevance. The document also includes a table summarizing the comparison of the two models.
+Summary: Error: Model inference returned None...
+Extracting structured data...
+DEBUG: About to call extract_structured_data with test_image: '/work/projects/mhahsler/course_recomm/allocation001/vision-encode/DeepSeek-OCR-Web-UI/images/mamorx.png'
+=====================
+BASE:  torch.Size([1, 256, 1280])
+PATCHES:  torch.Size([6, 100, 1280])
+=====================
+
+- conclusion: Conclusion or summary
+- references: References cited in the document
+
+The document is structured into several sections, including:
+- Introduction
+- Background
+- Methodology
+- Results
+- Discussion
+- Conclusion
+- References
+
+The document is written in a formal, academic style, with a clear and structured layout. The text is in English and uses a standard font, likely Times New Roman or a similar typeface. The document appears to be a research paper or a scholarly article, with a focus on the analysis of multi-modal scientific review systems. The text is well-organized, with clear headings and subheadings, and includes references to other works cited in the text. The document appears to be a formal academic paper, with a focus on research methodology and findings.
+Structured data: {'error': 'Model inference returned None'}...
+Generating peer review feedback...
+DEBUG: About to call review generation with test_image: '/work/projects/mhahsler/course_recomm/allocation001/vision-encode/DeepSeek-OCR-Web-UI/images/mamorx.png'
+=====================
+BASE:  torch.Size([1, 256, 1280])
+PATCHES:  torch.Size([6, 100, 1280])
+=====================
+ The paper is well-structured, with a clear introduction, methods, results, discussion, and conclusion sections. The figures and tables are well-labeled and relevant. The paper is well-written and easy to follow. The authors have addressed all of the major comments and have made significant contributions to the field. The paper is a valuable contribution to the field of multi-modal scientific review.
+Review feedback: Error: Model inference returned None...
+Generating detailed review outline...
+DEBUG: About to call detailed review generation with test_image: '/work/projects/mhahsler/course_recomm/allocation001/vision-encode/DeepSeek-OCR-Web-UI/images/mamorx.png'
+=====================
+BASE:  torch.Size([1, 256, 1280])
+PATCHES:  torch.Size([6, 100, 1280])
+=====================
+  
+
+
+**Figure 2: Comparison of the architectures of different automated review systems**
+
+
+**Figure 2: Comparison of the architectures of different automated review systems**
+
+
+**Figure 3: Comparison of the architectures of different automated review systems**
+
+
+**Figure 3: Comparison of architectures of different automated review systems**
+
+
+**Figure 4: Comparison of the architectures of different automated review systems**
+
+
+**Figure 4: Comparison of architectures of different automated review systems**
+
+
+**Figure 5: Comparison of the architectures of different automated review systems**
+
+
+**Figure 5: Comparison of architectures of different automated review systems**
+
+
+**Figure 6: Comparison of the architectures of different automated review systems**
+
+
+**Figure 6: Comparison of architectures of different automated review systems**
+
+
+**Figure 7: Comparison of the architectures of different automated review systems**
+
+
+**Figure 7: Comparison of architectures of different automated review systems**
+
+
+**Figure 8: Comparison of the architectures of different automated review systems**
+
+
+**Figure 8: Comparison of architectures of different automated review systems**
+
+
+**Figure 9: Comparison of the architectures of different automated review systems**
+
+
+**Figure 9: Comparison of architectures of different automated review systems**
+
+
+**Figure 10: Comparison of the architectures of different automated review systems**
+
+
+**Figure 10: Comparison of architectures of different automated review systems**
+
+
+**Figure 11: Comparison of the architectures of different automated review systems**
+
+
+**Figure 11: Comparison of architectures of different automated review systems**
+
+
+**Figure 12: Comparison of the architectures of different automated review systems**
+
+
+**Figure 12: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 13: Comparison of the architectures of different automated review systems**
+
+
+**Figure 13: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 14: Comparison of the architectures of different automated review systems</center>
+
+**Figure 14: Comparison of the architectures of different automated review systems**
+
+
+**Figure 15: Comparison of the architectures of different automated review systems**
+
+
+**Figure 15: Comparison of architectures of different automated review systems**
+
+
+**Figure 16: Comparison of the architectures of different automated review systems**
+
+
+**Figure 16: Comparison of architectures of different automated review systems**
+
+
+**Figure 17: Comparison of the architectures of different automated review systems**
+
+
+**Figure 17: Comparison of architectures of different automated review systems**
+
+
+**Figure 18: Comparison of the architectures of different automated review systems**
+
+
+**Figure 18: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 19: Comparison of the architectures of different automated review systems**
+
+
+**Figure 19: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 20: Comparison of the architectures of different automated review systems</center>
+
+**Figure 20: Comparison of the architectures of different automated review systems**
+
+
+**Figure 21: Comparison of the architectures of different automated review systems**
+
+
+**Figure 21: Comparison of architectures of different automated review systems**
+
+
+**Figure 22: Comparison of the architectures of different automated review systems**
+
+
+**Figure 22: Comparison of architectures of different automated review systems**
+
+
+**Figure 23: Comparison of the architectures of different automated review systems**
+
+
+**Figure 23: Comparison of architectures of different automated review systems**
+
+
+**Figure 24: Comparison of the architectures of different automated review systems**
+
+
+**Figure 24: Comparison of architectures of different automated review systems**
+
+
+**Figure 25: Comparison of the architectures of different automated review systems**
+
+
+**Figure 25: Comparison of architectures of different automated review systems**
+
+
+**Figure 26: Comparison of the architectures of different automated review systems**
+
+
+**Figure 26: Comparison of architectures of different automated review systems**
+
+
+**Figure 27: Comparison of the architectures of different automated review systems**
+
+
+**Figure 27: Comparison of architectures of different automated review systems**
+
+
+**Figure 28: Comparison of the architectures of different automated review systems**
+
+
+**Figure 28: Comparison of architectures of different automated review systems**
+
+
+**Figure 29: Comparison of the architectures of different automated review systems**
+
+
+**Figure 29: Comparison of architectures of different automated review systems**
+
+
+**Figure 30: Comparison of the architectures of different automated review systems**
+
+
+**Figure 30: Comparison of architectures of different automated review systems**
+
+
+**Figure 31: Comparison of the architectures of different automated review systems**
+
+
+**Figure 31: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 32: Comparison of the architectures of different automated review systems**
+
+
+**Figure 32: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 33: Comparison of the architectures of different automated review systems</center>
+
+**Figure 33: Comparison of the architectures of different automated review systems**
+
+
+**Figure 34: Comparison of the architectures of different automated review systems**
+
+
+**Figure 34: Comparison of architectures of different automated review systems**
+
+
+**Figure 35: Comparison of the architectures of different automated review systems**
+
+
+**Figure 35: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 36: Comparison of the architectures of different automated review systems**
+
+
+**Figure 36: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 37: Comparison of the architectures of different automated review systems</center>
+
+**Figure 37: Comparison of the architectures of different automated review systems**
+
+
+**Figure 38: Comparison of the architectures of different automated review systems**
+
+
+**Figure 38: Comparison of architectures of different automated review systems**
+
+
+**Figure 39: Comparison of the architectures of different automated review systems**
+
+
+**Figure 39: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 40: Comparison of the architectures of different automated review systems**
+
+
+**Figure 40: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 41: Comparison of the architectures of different automated review systems</center>
+
+**Figure 41: Comparison of the architectures of different automated review systems**
+
+
+**Figure 42: Comparison of the architectures of different automated review systems**
+
+
+**Figure 42: Comparison of architectures of different automated review systems**
+
+
+**Figure 43: Comparison of the architectures of different automated review systems**
+
+
+**Figure 43: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 44: Comparison of the architectures of different automated review systems**
+
+
+**Figure 44: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 45: Comparison of the architectures of different automated review systems</center>
+
+**Figure 45: Comparison of the architectures of different automated review systems**
+
+
+**Figure 46: Comparison of the architectures of different automated review systems**
+
+
+**Figure 46: Comparison of architectures of different automated review systems**
+
+
+**Figure 47: Comparison of the architectures of different automated review systems**
+
+
+**Figure 47: Comparison of architectures of different automated review systems**
+
+
+**Figure 48: Comparison of the architectures of different automated review systems**
+
+
+**Figure 48: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 49: Comparison of the architectures of different automated review systems**
+
+
+**Figure 49: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 50: Comparison of the architectures of different automated review systems</center>
+
+**Figure 50: Comparison of the architectures of different automated review systems**
+
+
+**Figure 51: Comparison of the architectures of different automated review systems**
+
+
+**Figure 51: Comparison of architectures of different automated review systems**
+
+
+**Figure 52: Comparison of the architectures of different automated review systems**
+
+
+**Figure 52: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 53: Comparison of the architectures of different automated review systems**
+
+
+**Figure 53: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 54: Comparison of the architectures of different automated review systems</center>
+
+**Figure 54: Comparison of the architectures of different automated review systems**
+
+
+**Figure 55: Comparison of the architectures of different automated review systems**
+
+
+**Figure 55: Comparison of architectures of different automated review systems**
+
+
+**Figure 56: Comparison of the architectures of different automated review systems**
+
+
+**Figure 56: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 57: Comparison of the architectures of different automated review systems**
+
+
+**Figure 57: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 58: Comparison of the architectures of different automated review systems</center>
+
+**Figure 58: Comparison of the architectures of different automated review systems**
+
+
+**Figure 59: Comparison of the architectures of different automated review systems**
+
+
+**Figure 59: Comparison of architectures of different automated review systems**
+
+
+**Figure 60: Comparison of the architectures of different automated review systems**
+
+
+**Figure 60: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 61: Comparison of the architectures of different automated review systems**
+
+
+**Figure 61: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 62: Comparison of the architectures of different automated review systems</center>
+
+**Figure 62: Comparison of the architectures of different automated review systems**
+
+
+**Figure 63: Comparison of the architectures of different automated review systems**
+
+
+**Figure 63: Comparison of architectures of different automated review systems**
+
+
+**Figure 64: Comparison of the architectures of different automated review systems**
+
+
+**Figure 64: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 65: Comparison of the architectures of different automated review systems**
+
+
+**Figure 65: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 66: Comparison of the architectures of different automated review systems</center>
+
+**Figure 66: Comparison of the architectures of different automated review systems**
+
+
+**Figure 67: Comparison of the architectures of different automated review systems**
+
+
+**Figure 67: Comparison of architectures of different automated review systems**
+
+
+**Figure 68: Comparison of the architectures of different automated review systems**
+
+
+**Figure 68: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 69: Comparison of the architectures of different automated review systems**
+
+
+**Figure 69: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 70: Comparison of the architectures of different automated review systems</center>
+
+**Figure 70: Comparison of the architectures of different automated review systems**
+
+
+**Figure 71: Comparison of the architectures of different automated review systems**
+
+
+**Figure 71: Comparison of architectures of different automated review systems**
+
+
+**Figure 72: Comparison of the architectures of different automated review systems**
+
+
+**Figure 72: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 73: Comparison of the architectures of different automated review systems**
+
+
+**Figure 73: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 74: Comparison of the architectures of different automated review systems</center>
+
+**Figure 74: Comparison of the architectures of different automated review systems**
+
+
+**Figure 75: Comparison of the architectures of different automated review systems**
+
+
+**Figure 75: Comparison of architectures of different automated review systems**
+
+
+**Figure 76: Comparison of the architectures of different automated review systems**
+
+
+**Figure 76: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 77: Comparison of the architectures of different automated review systems**
+
+
+**Figure 77: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 78: Comparison of the architectures of different automated review systems</center>
+
+**Figure 78: Comparison of the architectures of different automated review systems**
+
+
+**Figure 79: Comparison of the architectures of different automated review systems**
+
+
+**Figure 79: Comparison of architectures of different automated review systems**
+
+
+**Figure 80: Comparison of the architectures of different automated review systems**
+
+
+**Figure 80: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 81: Comparison of the architectures of different automated review systems**
+
+
+**Figure 81: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 82: Comparison of the architectures of different automated review systems</center>
+
+**Figure 82: Comparison of the architectures of different automated review systems**
+
+
+**Figure 83: Comparison of the architectures of different automated review systems**
+
+
+**Figure 83: Comparison of architectures of different automated review systems**
+
+
+**Figure 84: Comparison of the architectures of different automated review systems**
+
+
+**Figure 84: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 85: Comparison of the architectures of different automated review systems**
+
+
+**Figure 85: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 86: Comparison of the architectures of different automated review systems</center>
+
+**Figure 86: Comparison of the architectures of different automated review systems**
+
+
+**Figure 87: Comparison of the architectures of different automated review systems**
+
+
+**Figure 87: Comparison of architectures of different automated review systems**
+
+
+**Figure 88: Comparison of the architectures of different automated review systems**
+
+
+**Figure 88: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 89: Comparison of the architectures of different automated review systems**
+
+
+**Figure 89: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 90: Comparison of the architectures of different automated review systems</center>
+
+**Figure 90: Comparison of the architectures of different automated review systems**
+
+
+**Figure 91: Comparison of the architectures of different automated review systems**
+
+
+**Figure 91: Comparison of architectures of different automated review systems**
+
+
+**Figure 92: Comparison of the architectures of different automated review systems**
+
+
+**Figure 92: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 93: Comparison of the architectures of different automated review systems**
+
+
+**Figure 93: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 94: Comparison of the architectures of different automated review systems</center>
+
+**Figure 94: Comparison of the architectures of different automated review systems**
+
+
+**Figure 95: Comparison of the architectures of different automated review systems**
+
+
+**Figure 95: Comparison of architectures of different automated review systems**
+
+
+**Figure 96: Comparison of the architectures of different automated review systems**
+
+
+**Figure 96: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 97: Comparison of the architectures of different automated review systems**
+
+
+**Figure 97: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 98: Comparison of the architectures of different automated review systems</center>
+
+**Figure 98: Comparison of the architectures of different automated review systems**
+
+
+**Figure 99: Comparison of the architectures of different automated review systems**
+
+
+**Figure 99: Comparison of architectures of different automated review systems**
+
+
+**Figure 100: Comparison of the architectures of different automated review systems**
+
+
+**Figure 100: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 101: Comparison of the architectures of different automated review systems**
+
+
+**Figure 101: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 102: Comparison of the architectures of different automated review systems</center>
+
+**Figure 102: Comparison of the architectures of different automated review systems**
+
+
+**Figure 103: Comparison of the architectures of different automated review systems**
+
+
+**Figure 103: Comparison of architectures of different automated review systems**
+
+
+**Figure 104: Comparison of the architectures of different automated review systems**
+
+
+**Figure 104: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 105: Comparison of the architectures of different automated review systems**
+
+
+**Figure 105: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 106: Comparison of the architectures of different automated review systems</center>
+
+**Figure 106: Comparison of the architectures of different automated review systems**
+
+
+**Figure 107: Comparison of the architectures of different automated review systems**
+
+
+**Figure 107: Comparison of architectures of different automated review systems**
+
+
+**Figure 108: Comparison of the architectures of different automated review systems**
+
+
+**Figure 108: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 109: Comparison of the architectures of different automated review systems**
+
+
+**Figure 109: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 110: Comparison of the architectures of different automated review systems</center>
+
+**Figure 110: Comparison of the architectures of different automated review systems**
+
+
+**Figure 111: Comparison of the architectures of different automated review systems**
+
+
+**Figure 111: Comparison of architectures of different automated review systems**
+
+
+**Figure 112: Comparison of the architectures of different automated review systems**
+
+
+**Figure 112: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 113: Comparison of the architectures of different automated review systems**
+
+
+**Figure 113: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 114: Comparison of the architectures of different automated review systems</center>
+
+**Figure 114: Comparison of the architectures of different automated review systems**
+
+
+**Figure 115: Comparison of the architectures of different automated review systems**
+
+
+**Figure 115: Comparison of architectures of different automated review systems**
+
+
+**Figure 116: Comparison of the architectures of different automated review systems**
+
+
+**Figure 116: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 117: Comparison of the architectures of different automated review systems**
+
+
+**Figure 117: Comparison of architectures of different automated review systems**
+
+
+<center>Figure 118: Comparison of the architectures of different automated review systems</center>
+
+**Figure 118: Comparison of the architectures of different automated review systems**
+
+
+**Figure 119: Comparison of the architectures of different automated review systems**
+
+
+**Figure 119: Comparison of architectures of different automated review systems**
+
+
+**Figure 120: Comparison of the architectures of different automated review systems**
+
+
+**Figure 120: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 121: Comparison of the architectures of different automated review systems**
+
+
+**Figure 121: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 122: Comparison of the architectures of different automated review systems</center>
+
+**Figure 122: Comparison of the architectures of different automated review systems**
+
+
+**Figure 123: Comparison of the architectures of different automated review systems**
+
+
+**Figure 123: Comparison of architectures of different automated review systems**
+
+
+**Figure 124: Comparison of the architectures of different automated review systems**
+
+
+**Figure 124: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 125: Comparison of the architectures of different automated review systems**
+
+
+**Figure 125: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 126: Comparison of the architectures of different automated review systems</center>
+
+**Figure 126: Comparison of the architectures of different automated review systems**
+
+
+**Figure 127: Comparison of the architectures of different automated review systems**
+
+
+**Figure 127: Comparison of architectures of different automated review systems**
+
+
+**Figure 128: Comparison of the architectures of different automated review systems**
+
+
+**Figure 128: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 129: Comparison of the architectures of different automated review systems**
+
+
+**Figure 129: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 130: Comparison of the architectures of different automated review systems</center>
+
+**Figure 130: Comparison of the architectures of different automated review systems**
+
+
+**Figure 131: Comparison of the architectures of different automated review systems**
+
+
+**Figure 131: Comparison of architectures of different automated review systems**
+
+
+**Figure 132: Comparison of the architectures of different automated review systems**
+
+
+**Figure 132: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 133: Comparison of the architectures of different automated review systems**
+
+
+**Figure 133: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 134: Comparison of the architectures of different automated review systems</center>
+
+**Figure 134: Comparison of the architectures of different automated review systems**
+
+
+**Figure 135: Comparison of the architectures of different automated review systems**
+
+
+**Figure 135: Comparison of architectures of different automated review systems**
+
+
+**Figure 136: Comparison of the architectures of different automated review systems**
+
+
+**Figure 136: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 137: Comparison of the architectures of different automated review systems**
+
+
+**Figure 137: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 138: Comparison of the architectures of different automated review systems</center>
+
+**Figure 138: Comparison of the architectures of different automated review systems**
+
+
+**Figure 139: Comparison of the architectures of different automated review systems**
+
+
+**Figure 139: Comparison of architectures of different automated review systems**
+
+
+**Figure 140: Comparison of the architectures of different automated review systems**
+
+
+**Figure 140: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 141: Comparison of the architectures of different automated review systems**
+
+
+**Figure 141: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 142: Comparison of the architectures of different automated review systems</center>
+
+**Figure 142: Comparison of the architectures of different automated review systems**
+
+
+**Figure 143: Comparison of the architectures of different automated review systems**
+
+
+**Figure 143: Comparison of architectures of different automated review systems**
+
+
+**Figure 144: Comparison of the architectures of different automated review systems**
+
+
+**Figure 144: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 145: Comparison of the architectures of different automated review systems**
+
+
+**Figure 145: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 146: Comparison of the architectures of different automated review systems</center>
+
+**Figure 146: Comparison of the architectures of different automated review systems**
+
+
+**Figure 147: Comparison of the architectures of different automated review systems**
+
+
+**Figure 147: Comparison of architectures of different automated review systems**
+
+
+**Figure 148: Comparison of the architectures of different automated review systems**
+
+
+**Figure 148: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 149: Comparison of the architectures of different automated review systems**
+
+
+**Figure 149: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 150: Comparison of the architectures of different automated review systems</center>
+
+**Figure 150: Comparison of the architectures of different automated review systems**
+
+
+**Figure 151: Comparison of the architectures of different automated review systems**
+
+
+**Figure 151: Comparison of architectures of different automated review systems**
+
+
+**Figure 152: Comparison of the architectures of different automated review systems**
+
+
+**Figure 152: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 153: Comparison of the architectures of different automated review systems**
+
+
+**Figure 153: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 154: Comparison of the architectures of different automated review systems</center>
+
+**Figure 154: Comparison of the architectures of different automated review systems**
+
+
+**Figure 155: Comparison of the architectures of different automated review systems**
+
+
+**Figure 155: Comparison of architectures of different automated review systems**
+
+
+**Figure 156: Comparison of the architectures of different automated review systems**
+
+
+**Figure 156: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 157: Comparison of the architectures of different automated review systems**
+
+
+**Figure 157: Comparison of architectures of different automated review systems**
+
+
+**Figure 158: Comparison of the architectures of different automated review systems**
+
+
+**Figure 158: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 159: Comparison of the architectures of different automated review systems**
+
+
+**Figure 159: Comparison of architectures of different automated review systems**
+
+
+**Figure 160: Comparison of the architectures of different automated review systems**
+
+
+**Figure 160: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 161: Comparison of the architectures of different automated review systems**
+
+
+**Figure 161: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 162: Comparison of the architectures of different automated review systems</center>
+
+**Figure 162: Comparison of the architectures of different automated review systems**
+
+
+**Figure 163: Comparison of the architectures of different automated review systems**
+
+
+**Figure 163: Comparison of architectures of different automated review systems**
+
+
+**Figure 164: Comparison of the architectures of different automated review systems**
+
+
+**Figure 164: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 165: Comparison of the architectures of different automated review systems**
+
+
+**Figure 165: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 166: Comparison of the architectures of different automated review systems</center>
+
+**Figure 166: Comparison of the architectures of different automated review systems**
+
+
+**Figure 167: Comparison of the architectures of different automated review systems**
+
+
+**Figure 167: Comparison of architectures of different automated review systems**
+
+
+**Figure 168: Comparison of the architectures of different automated review systems**
+
+
+**Figure 168: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 169: Comparison of the architectures of different automated review systems**
+
+
+**Figure 169: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 170: Comparison of the architectures of different automated review systems</center>
+
+**Figure 170: Comparison of the architectures of different automated review systems**
+
+
+**Figure 171: Comparison of the architectures of different automated review systems**
+
+
+**Figure 171: Comparison of architectures of different automated review systems**
+
+
+**Figure 172: Comparison of the architectures of different automated review systems**
+
+
+**Figure 172: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 173: Comparison of the architectures of different automated review systems**
+
+
+**Figure 173: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 174: Comparison of the architectures of different automated review systems</center>
+
+**Figure 174: Comparison of the architectures of different automated review systems**
+
+
+**Figure 175: Comparison of the architectures of different automated review systems**
+
+
+**Figure 175: Comparison of architectures of different automated review systems**
+
+
+**Figure 176: Comparison of the architectures of different automated review systems**
+
+
+**Figure 176: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 177: Comparison of the architectures of different automated review systems**
+
+
+**Figure 177: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 178: Comparison of the architectures of different automated review systems</center>
+
+**Figure 178: Comparison of the architectures of different automated review systems**
+
+
+**Figure 179: Comparison of the architectures of different automated review systems**
+
+
+**Figure 179: Comparison of architectures of different automated review systems**
+
+
+**Figure 180: Comparison of the architectures of different automated review systems**
+
+
+**Figure 180: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 181: Comparison of the architectures of different automated review systems**
+
+
+**Figure 181: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 182: Comparison of the architectures of different automated review systems</center>
+
+**Figure 182: Comparison of the architectures of different automated review systems**
+
+
+**Figure 183: Comparison of the architectures of different automated review systems**
+
+
+**Figure 183: Comparison of architectures of different automated review systems**
+
+
+**Figure 184: Comparison of the architectures of different automated review systems**
+
+
+**Figure 184: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 185: Comparison of the architectures of different automated review systems**
+
+
+**Figure 185: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 186: Comparison of the architectures of different automated review systems</center>
+
+**Figure 186: Comparison of the architectures of different automated review systems**
+
+
+**Figure 187: Comparison of the architectures of different automated review systems**
+
+
+**Figure 187: Comparison of architectures of different automated review systems**
+
+
+**Figure 188: Comparison of the architectures of different automated review systems**
+
+
+**Figure 188: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 189: Comparison of the architectures of different automated review systems**
+
+
+**Figure 189: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 190: Comparison of the architectures of different automated review systems</center>
+
+**Figure 190: Comparison of the architectures of different automated review systems**
+
+
+**Figure 191: Comparison of the architectures of different automated review systems**
+
+
+**Figure 191: Comparison of architectures of different automated review systems**
+
+
+**Figure 192: Comparison of the architectures of different automated review systems**
+
+
+**Figure 192: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 193: Comparison of the architectures of different automated review systems**
+
+
+**Figure 193: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 194: Comparison of the architectures of different automated review systems</center>
+
+**Figure 194: Comparison of the architectures of different automated review systems**
+
+
+**Figure 195: Comparison of the architectures of different automated review systems**
+
+
+**Figure 195: Comparison of architectures of different automated review systems**
+
+
+**Figure 196: Comparison of the architectures of different automated review systems**
+
+
+**Figure 196: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 197: Comparison of the architectures of different automated review systems**
+
+
+**Figure 197: Comparison of architectures of different automated review systems**
+
+
+**Figure 198: Comparison of the architectures of different automated review systems**
+
+
+**Figure 198: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 199: Comparison of the architectures of different automated review systems**
+
+
+**Figure 199: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 200: Comparison of the architectures of different automated review systems</center>
+
+**Figure 200: Comparison of the architectures of different automated review systems**
+
+
+**Figure 201: Comparison of the architectures of different automated review systems**
+
+
+**Figure 201: Comparison of architectures of different automated review systems**
+
+
+**Figure 202: Comparison of the architectures of different automated review systems**
+
+
+**Figure 202: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 203: Comparison of the architectures of different automated review systems**
+
+
+**Figure 203: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 204: Comparison of the architectures of different automated review systems</center>
+
+**Figure 204: Comparison of the architectures of different automated review systems**
+
+
+**Figure 205: Comparison of the architectures of different automated review systems**
+
+
+**Figure 205: Comparison of architectures of different automated review systems**
+
+
+**Figure 206: Comparison of the architectures of different automated review systems**
+
+
+**Figure 206: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 207: Comparison of the architectures of different automated review systems**
+
+
+**Figure 207: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 208: Comparison of the architectures of different automated review systems</center>
+
+**Figure 208: Comparison of the architectures of different automated review systems**
+
+
+**Figure 209: Comparison of the architectures of different automated review systems**
+
+
+**Figure 209: Comparison of architectures of different automated review systems**
+
+
+**Figure 210: Comparison of the architectures of different automated review systems**
+
+
+**Figure 210: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 211: Comparison of the architectures of different automated review systems**
+
+
+**Figure 211: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 212: Comparison of the architectures of different automated review systems</center>
+
+**Figure 212: Comparison of the architectures of different automated review systems**
+
+
+**Figure 213: Comparison of the architectures of different automated review systems**
+
+
+**Figure 213: Comparison of architectures of different automated review systems**
+
+
+**Figure 214: Comparison of the architectures of different automated review systems**
+
+
+**Figure 214: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 215: Comparison of the architectures of different automated review systems**
+
+
+**Figure 215: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 216: Comparison of the architectures of different automated review systems</center>
+
+**Figure 216: Comparison of the architectures of different automated review systems**
+
+
+**Figure 217: Comparison of the architectures of different automated review systems**
+
+
+**Figure 217: Comparison of architectures of different automated review systems**
+
+
+**Figure 218: Comparison of the architectures of different automated review systems**
+
+
+**Figure 218: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 219: Comparison of the architectures of different automated review systems**
+
+
+**Figure 219: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 220: Comparison of the architectures of different automated review systems</center>
+
+**Figure 220: Comparison of the architectures of different automated review systems**
+
+
+**Figure 221: Comparison of the architectures of different automated review systems**
+
+
+**Figure 221: Comparison of architectures of different automated review systems**
+
+
+**Figure 222: Comparison of the architectures of different automated review systems**
+
+
+**Figure 222: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 223: Comparison of the architectures of different automated review systems**
+
+
+**Figure 223: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 224: Comparison of the architectures of different automated review systems</center>
+
+**Figure 224: Comparison of the architectures of different automated review systems**
+
+
+**Figure 225: Comparison of the architectures of different automated review systems**
+
+
+**Figure 225: Comparison of architectures of different automated review systems**
+
+
+**Figure 226: Comparison of the architectures of different automated review systems**
+
+
+**Figure 226: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 227: Comparison of the architectures of different automated review systems**
+
+
+**Figure 227: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 228: Comparison of the architectures of different automated review systems</center>
+
+**Figure 228: Comparison of the architectures of different automated review systems**
+
+
+**Figure 229: Comparison of the architectures of different automated review systems**
+
+
+**Figure 229: Comparison of architectures of different automated review systems**
+
+
+**Figure 230: Comparison of the architectures of different automated review systems**
+
+
+**Figure 230: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 231: Comparison of the architectures of different automated review systems**
+
+
+**Figure 231: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 232: Comparison of the architectures of different automated review systems</center>
+
+**Figure 232: Comparison of the architectures of different automated review systems**
+
+
+**Figure 233: Comparison of the architectures of different automated review systems**
+
+
+**Figure 233: Comparison of architectures of different automated review systems**
+
+
+**Figure 234: Comparison of the architectures of different automated review systems**
+
+
+**Figure 234: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 235: Comparison of the architectures of different automated review systems**
+
+
+**Figure 235: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 236: Comparison of the architectures of different automated review systems</center>
+
+**Figure 236: Comparison of the architectures of different automated review systems**
+
+
+**Figure 237: Comparison of the architectures of different automated review systems**
+
+
+**Figure 237: Comparison of architectures of different automated review systems**
+
+
+**Figure 238: Comparison of the architectures of different automated review systems**
+
+
+**Figure 238: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 239: Comparison of the architectures of different automated review systems**
+
+
+**Figure 239: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 240: Comparison of the architectures of different automated review systems</center>
+
+**Figure 240: Comparison of the architectures of different automated review systems**
+
+
+**Figure 241: Comparison of the architectures of different automated review systems**
+
+
+**Figure 241: Comparison of architectures of different automated review systems**
+
+
+**Figure 242: Comparison of the architectures of different automated review systems**
+
+
+**Figure 242: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 243: Comparison of the architectures of different automated review systems**
+
+
+**Figure 243: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 244: Comparison of the architectures of different automated review systems**
+
+
+**Figure 244: Comparison of the architectures of different automated review systems**
+
+
+**Figure 244. Comparison of the architectures of different automated review systems**
+
+
+**Figure 245: Comparison of the architectures of different automated review systems**
+
+
+**Figure 245: Comparison of the structures of different automated review systems**
+
+
+**Figure 245: Comparison of the architectures of different automated reviewed systems**
+
+
+**Figure 246: Comparison of the architectures of different automated review systems**
+
+
+**Figure 246: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 246: Comparison of the architectures of different automated review systems**
+
+
+**Figure 247: Comparison of the architectures of different automated review systems**
+
+
+**Figure 247: Comparison of architectures of different automated review systems**
+
+
+**Figure 247: Comparison of the architectures of different reviewed systems**
+
+
+**Figure 247: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 248: Comparison of the architectures of different automated review systems**
+
+
+**Figure 248: Comparison of the architectures of different automated review systems**
+
+
+**Figure 248. Comparison of the architectures of different automated review systems**
+
+
+**Figure 249: Comparison of the architectures of different automated review systems**
+
+
+**Figure 249: Comparison of the structures of different automated review systems**
+
+
+**Figure 249: Comparison of the architectures of different automated reviewed systems**
+
+
+**Figure 249: Comparison of the architectures of different automated review systems**
+
+
+<center>Figure 250: Comparison of the architectures of different automated review systems**
+
+
+**Figure 250: Comparison of the architectures of different automated review systems**
+
+
+**Figure 250. Comparison of the architectures of different automated review systems**
+
+
+**Figure 250: Comparison of the structures of different automated review systems**
+
+
+**Figure 250: Comparison of the architectures of different automated reviewed systems**
+
+
+**Figure 250: Comparison of the structures of different automated review systems**
+
+
+Detailed review: Error: Model inference returned None...
+
+================================================================================
+EXECUTION COMPLETED SUCCESSFULLY
+================================================================================
+
+✗ No embeddings extracted
+
+✓ QA Answer: Error: Model inference returned None...
+
+✓ Summary: Error: Model inference returned None...
+
+✓ Structured Data: {'error': 'Model inference returned None'}...
+
+✓ Review Feedback: Error: Model inference returned None...
+
+✓ Detailed Review: Error: Model inference returned None...
+GPU cache cleared
+DeepSeek-OCR inference and analysis completed.

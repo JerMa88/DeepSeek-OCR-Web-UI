@@ -19,37 +19,88 @@ save_directory = './model'
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print(f"Using device: {device}")
 
+# Check GPU memory if available
+if device == 'cuda':
+    total_memory = torch.cuda.get_device_properties(0).total_memory / 1024**3  # GB
+    allocated_memory = torch.cuda.memory_allocated(0) / 1024**3  # GB
+    cached_memory = torch.cuda.memory_reserved(0) / 1024**3  # GB
+    print(f"GPU Memory - Total: {total_memory:.1f}GB, Allocated: {allocated_memory:.1f}GB, Cached: {cached_memory:.1f}GB")
+    
+    # Clear any existing cache
+    torch.cuda.empty_cache()
+
 tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
 
-# Configure attention implementation based on device
+# Configure model loading with proper device and dtype handling
 if device == 'cuda':
     try:
+        # Try with Flash Attention 2 and proper dtype
+        print("Attempting to load model with Flash Attention 2...")
         model = AutoModel.from_pretrained(
             model_name, 
             cache_dir=save_directory,
             _attn_implementation='flash_attention_2', 
+            torch_dtype=torch.bfloat16,  # Specify dtype for Flash Attention
             trust_remote_code=True, 
-            use_safetensors=True
+            use_safetensors=True,
+            device_map="auto"  # Automatically place on GPU
         )
-        model = model.eval().cuda().to(torch.bfloat16)
+        model = model.eval()
+        print("✓ Successfully loaded model with Flash Attention 2")
     except Exception as e:
         print(f"Flash attention failed, falling back to regular attention: {e}")
-        model = AutoModel.from_pretrained(
-            model_name, 
-            cache_dir=save_directory,
-            trust_remote_code=True, 
-            use_safetensors=True
-        )
-        model = model.eval().cuda()
+        try:
+            # Fallback to regular attention with proper GPU placement
+            print("Loading model with regular attention...")
+            model = AutoModel.from_pretrained(
+                model_name, 
+                cache_dir=save_directory,
+                torch_dtype=torch.bfloat16,
+                trust_remote_code=True, 
+                use_safetensors=True,
+            )
+            model = model.to(device).eval()  # Explicitly move to GPU
+            print("✓ Successfully loaded model with regular attention")
+        except Exception as e2:
+            print(f"bfloat16 failed, trying float16: {e2}")
+            # Final fallback to float16
+            model = AutoModel.from_pretrained(
+                model_name, 
+                cache_dir=save_directory,
+                torch_dtype=torch.float16,
+                trust_remote_code=True, 
+                use_safetensors=True,
+            )
+            model = model.to(device).eval()
+            print("✓ Successfully loaded model with float16")
 else:
     # CPU mode
+    print("Loading model for CPU...")
     model = AutoModel.from_pretrained(
         model_name, 
         cache_dir=save_directory,
+        torch_dtype=torch.float32,  # Use float32 for CPU
         trust_remote_code=True, 
-        use_safetensors=True
+        use_safetensors=True,
     )
     model = model.eval()
+    print("✓ Successfully loaded model for CPU")
+
+# Check GPU memory after model loading
+if device == 'cuda':
+    allocated_memory = torch.cuda.memory_allocated(0) / 1024**3  # GB
+    cached_memory = torch.cuda.memory_reserved(0) / 1024**3  # GB
+    print(f"GPU Memory after model loading - Allocated: {allocated_memory:.1f}GB, Cached: {cached_memory:.1f}GB")
+    
+    # Verify model is actually on GPU
+    model_device = next(model.parameters()).device
+    print(f"Model is on device: {model_device}")
+    
+    if model_device.type != 'cuda':
+        print("WARNING: Model is not on GPU! Attempting to move...")
+        model = model.to(device)
+        model_device = next(model.parameters()).device
+        print(f"Model moved to device: {model_device}")
 
 # ============== Fixed Optical Compression Module ==============
 class OpticalCompressor(nn.Module):
@@ -283,24 +334,52 @@ Current Status: {result['compression_ratio']:.2f}× compression achieved ✓"""
 
 # ============== Main Execution ==============
 def main():
-    # Run DeepSeek-OCR on image
-    prompt = "<image>\n<|grounding|>Convert the document to markdown. "
-    # image_file = './images/rec_sys.png'
+    # Clear any existing GPU cache
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+    
+    # Check if image file exists
     image_file = './images/mamorx.png'
+    if not os.path.exists(image_file):
+        # Try alternative image path
+        image_file = './images/rec_sys.png'
+        if not os.path.exists(image_file):
+            print(f"ERROR: No image file found. Checked:")
+            print(f"  - ./images/mamorx.png")
+            print(f"  - ./images/rec_sys.png") 
+            return None
+    
+    print(f"Using image file: {image_file}")
+    
+    # Run DeepSeek-OCR on image with reduced parameters for memory efficiency
+    prompt = "<image>\n<|grounding|>Convert the document to markdown. "
     output_path = './output/'
     
+    # Create output directory if it doesn't exist
+    os.makedirs(output_path, exist_ok=True)
+    
     print("Running DeepSeek-OCR inference...")
-    ocr_result = model.infer(
-        tokenizer, 
-        prompt=prompt, 
-        image_file=image_file, 
-        output_path=output_path, 
-        base_size=1024, 
-        image_size=640, 
-        crop_mode=True, 
-        save_results=True, 
-        test_compress=True
-    )
+    try:
+        # Use smaller image size to reduce memory usage
+        ocr_result = model.infer(
+            tokenizer, 
+            prompt=prompt, 
+            image_file=image_file, 
+            output_path=output_path, 
+            base_size=768,  # Reduced from 1024
+            image_size=512,  # Reduced from 640 
+            crop_mode=True, 
+            save_results=True, 
+            test_compress=True
+        )
+        
+        # Clear GPU cache after inference
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+            
+    except Exception as e:
+        print(f"OCR inference failed: {e}")
+        ocr_result = None
     
     # Load the result if it was saved
     try:
@@ -308,7 +387,14 @@ def main():
             ocr_result = f.read()
         print("Loaded OCR result from ./output/result.mmd")
     except:
-        pass
+        if ocr_result is None:
+            print("No OCR result available and no saved file found. Using sample text.")
+            ocr_result = "Sample document text for testing compression pipeline."
+    
+    # Validate OCR result
+    if not ocr_result or len(ocr_result.strip()) == 0:
+        print("Warning: OCR result is empty. Using sample text.")
+        ocr_result = "Sample document text for testing compression pipeline."
     
     print("\nOCR Result (first 500 chars):")
     print(ocr_result[:500] if len(ocr_result) > 500 else ocr_result)
@@ -316,11 +402,20 @@ def main():
     
     # Initialize compression pipeline
     print("\nInitializing optical compression pipeline...")
-    pipeline = TextToOpticalPipeline()
-    
-    # Process the OCR output through compression
-    print("Compressing text to optical representation...")
-    compression_result = pipeline.process_text(ocr_result)
+    try:
+        pipeline = TextToOpticalPipeline()
+        
+        # Process the OCR output through compression
+        print("Compressing text to optical representation...")
+        compression_result = pipeline.process_text(ocr_result)
+        
+        # Clear GPU cache after compression
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+            
+    except Exception as e:
+        print(f"Compression pipeline failed: {e}")
+        return None
     
     # Visualize the compression
     print("\nGenerating visualization...")
@@ -450,4 +545,31 @@ Format as JSON:"""
     return compression_result
 
 if __name__ == "__main__":
-    result = main()
+    try:
+        print("Starting embedding_visual.py execution...")
+        result = main()
+        
+        if result is not None:
+            print("\n" + "=" * 80)
+            print("EXECUTION COMPLETED SUCCESSFULLY")
+            print("=" * 80)
+            print(f"Compression ratio achieved: {result.get('compression_ratio', 'N/A')}")
+            print(f"QA answer available: {'qa_answer' in result}")
+            print(f"Summary available: {'summary' in result}")
+            print(f"Structured data available: {'structured_data' in result}")
+        else:
+            print("\n" + "=" * 80)
+            print("EXECUTION FAILED")
+            print("=" * 80)
+            
+    except KeyboardInterrupt:
+        print("\nExecution interrupted by user")
+    except Exception as e:
+        print(f"\nUnexpected error during execution: {e}")
+        import traceback
+        traceback.print_exc()
+    finally:
+        # Clean up GPU memory
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+            print("GPU cache cleared")

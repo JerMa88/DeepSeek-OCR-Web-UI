@@ -1,0 +1,707 @@
+DEBUG: Using test image path: '/work/projects/mhahsler/course_recomm/allocation001/vision-encode/DeepSeek-OCR-Web-UI/images/mamorx.png'
+Using device: cuda
+GPU Memory - Total: 79.3GB, Allocated: 0.0GB, Cached: 0.0GB
+Attempting to load model with Flash Attention 2...
+You are using a model of type deepseek_vl_v2 to instantiate a model of type DeepseekOCR. This is not supported for all configurations of models and can yield errors.
+Flash attention failed, falling back to regular attention: Using `low_cpu_mem_usage=True` or a `device_map` requires Accelerate: `pip install 'accelerate>=0.26.0'`
+Loading model with regular attention...
+You are using a model of type deepseek_vl_v2 to instantiate a model of type DeepseekOCR. This is not supported for all configurations of models and can yield errors.
+Some weights of DeepseekOCRForCausalLM were not initialized from the model checkpoint at deepseek-ai/DeepSeek-OCR and are newly initialized: ['model.vision_model.embeddings.position_ids']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+✓ Successfully loaded model with regular attention
+GPU Memory after model loading - Allocated: 6.3GB, Cached: 6.3GB
+Model is on device: cuda:0
+Running DeepSeek-OCR inference...
+/work/projects/mhahsler/course_recomm/allocation001/vision-encode/DeepSeek-OCR-Web-UI/.venv/lib/python3.9/site-packages/transformers/generation/configuration_utils.py:590: UserWarning: `do_sample` is set to `False`. However, `temperature` is set to `0.0` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `temperature`.
+  warnings.warn(
+The attention mask and the pad token id were not set. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+Setting `pad_token_id` to `eos_token_id`:None for open-end generation.
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+The `seen_tokens` attribute is deprecated and will be removed in v4.41. Use the `cache_position` model input instead.
+`get_max_cache()` is deprecated for all Cache classes. Use `get_max_cache_shape()` instead. Calling `get_max_cache()` will raise error from v4.48
+=====================
+BASE:  torch.Size([1, 144, 1280])
+PATCHES:  torch.Size([6, 100, 1280])
+=====================
+The attention layers in this model are transitioning from computing the RoPE embeddings internally through `position_ids` (2D tensor with the indexes of the tokens), to using externally computed `position_embeddings` (Tuple of tensors, containing cos and sin). In v4.46 `position_ids` will be removed and `position_embeddings` will be mandatory.
+<|ref|>sub_title<|/ref|><|det|>[[245, 40, 911, 74]]<|/det|>
+# MAMORX: Multi-Modal Scientific Review 
+
+<|ref|>sub_title<|/ref|><|det|>[[375, 80, 712, 109]]<|/det|>
+## External Knowledge 
+
+<|ref|>text<|/ref|><|det|>[[20, 95, 180, 115]]<|/det|>
+University of Colorado 
+
+<|ref|>text<|/ref|><|det|>[[28, 118, 170, 137]]<|/det|>
+Boulder 
+
+<|ref|>text<|/ref|><|det|>[[380, 100, 710, 120]]<|/det|>
+Pawan Tachayotin, Mike Wang, Tong Zeng, Bradley Sides, Daniel Acuna 
+
+<|ref|>text<|/ref|><|det|>[[400, 122, 690, 140]]<|/det|>
+University of Colorado Boulder 
+
+<|ref|>sub_title<|/ref|><|det|>[[130, 174, 225, 192]]<|/det|>
+### Background 
+
+<|ref|>text<|/ref|><|det|>[[50, 200, 350, 260]]<|/det|>
+The growing amounts of scientific literatures increase the burden of reviewers. Recent studies have explored AI-generated scientific paper reviews. While models like GPT-4 show promise, researchers hold mixed views on this approach. 
+
+<|ref|>text<|/ref|><|det|>[[50, 273, 250, 288]]<|/det|>
+Major challenges to AI reviews: 
+
+<|ref|>text<|/ref|><|det|>[[50, 290, 280, 305]]<|/det|>
+- Factual inaccuracies and outdated information 
+
+<|ref|>text<|/ref|><|det|>[[50, 307, 201, 321]]<|/det|>
+- Reference fabrication 
+
+<|ref|>text<|/ref|><|det|>[[50, 323, 220, 338]]<|/det|>
+- Weak context understanding 
+
+<|ref|>text<|/ref|><|det|>[[50, 340, 250, 355]]<|/det|>
+- Inability to provide personalized, constructive feedback 
+
+<|ref|>text<|/ref|><|det|>[[50, 357, 333, 371]]<|/det|>
+Paper review processes as done by human reviewers often integrate 
+
+<|ref|>text<|/ref|><|det|>[[50, 374, 170, 388]]<|/det|>
+- textual analysis, 
+
+<|ref|>text<|/ref|><|det|>[[50, 390, 180, 405]]<|/det|>
+- visual interpretation 
+
+<|ref|>text<|/ref|><|det|>[[50, 407, 180, 421]]<|/det|>
+- citation assessment 
+
+<|ref|>text<|/ref|><|det|>[[50, 423, 170, 438]]<|/det|>
+- external knowledge 
+
+<|ref|>text<|/ref|><|det|>[[50, 451, 350, 495]]<|/det|>
+Recent advances in multimodal AI models (processing text, images, and graphs) and multi-agent systems with external knowledge access offer promising new approaches to address these limitations. 
+
+<|ref|>sub_title<|/ref|><|det|>[[130, 500, 201, 517]]<|/det|>
+### Methods 
+
+<|ref|>text<|/ref|><|det|>[[50, 525, 333, 540]]<|/det|>
+Multi-agent framework led by a Leader Agent that coordinates specialized agents 
+
+<|ref|>text<|/ref|><|det|>[[50, 542, 350, 585]]<|/det|>
+- All agents have access to the full text of the paper
+- Each agent has different system prompt-driven task 
+
+<|ref|>text<|/ref|><|det|>[[50, 587, 333, 631]]<|/det|>
+- Impact Agent: Evaluates significance and novelty
+- Experiments Agent: Critiques methodology, datasets, and experimental design 
+
+<|ref|>text<|/ref|><|det|>[[50, 633, 310, 663]]<|/det|>
+- Clarity Agent: Assesses organization, structure, and presentation 
+
+<|ref|>sub_title<|/ref|><|det|>[[50, 680, 150, 695]]<|/det|>
+### Novel components 
+
+<|ref|>text<|/ref|><|det|>[[50, 697, 350, 726]]<|/det|>
+- Novelty Assessment: Queries Semantic Scholar to evaluate paper originality 
+
+<|ref|>text<|/ref|><|det|>[[50, 728, 333, 771]]<|/det|>
+- Generates queries, builds database of related papers
+- Removes papers already cited by subject paper
+- Performs pairwise novelty assessment against relevant papers 
+
+<|ref|>text<|/ref|><|det|>[[50, 773, 310, 802]]<|/det|>
+- Figure Critic Assessment: Analyzes visual elements using vision-capable LLMs 
+
+<|ref|>text<|/ref|><|det|>[[50, 804, 350, 848]]<|/det|>
+- Extracts figures and captions using PaperMage
+- Evaluates consistency with paper title/abstract
+- Provides clarity assessment and descriptive summaries 
+
+<|ref|>text<|/ref|><|det|>[[50, 860, 350, 890]]<|/det|>
+- Domain Huacheng: Analyzes visual elements using vision-capable LLMs 
+
+<|ref|>text<|/ref|><|det|>[[50, -1, 100, 115]]<|/det|>
+University of Colorado Boulder 
+
+<|ref|>text<|/ref|><|det|>[[50, 0, 100, 115]]<|/det|>
+University of Colorado Boulder 
+
+<|ref|>text<|/ref|><|det|>[[0, 0, 100, 115]]<|/det|>
+University of Colorado Boulder 
+
+<|ref|>sub_title<|/ref|><|det|>[[0, 0, 100, 115]]<|/det|>
+University of Colorado 
+
+<|ref|>sub_title<|/ref|><|det|>[[0, 0, 100, 115]]<|/det|>
+==================================================
+image size:  (1584, 1224)
+valid image tokens:  0
+output texts tokens (valid):  1036
+OCR inference failed: division by zero
+
+OCR Result (first 500 chars):
+Loaded OCR result from ./output/result.mmd
+![](images/0.jpg)
+
+
+<center>Figure 1: Architecture of the Recommender System Pipeline </center>  
+
+
+models to recommend or offer useful data for a personalized user experience. It also makes the LLM a goal- based agent, ensuring a robust recommendation and personalized user experience.  
+
+
+To bridge the technical and user- facing aspects of the system, the LLM interprets user prompts and synthesizes outputs from the recommender system into a parsed and formulated interface. The LLM with the chec
+================================================================================
+Extracting embeddings...
+Error extracting embeddings: Got unsupported ScalarType BFloat16
+Performing visual QA...
+DEBUG: About to call QA with test_image: '/work/projects/mhahsler/course_recomm/allocation001/vision-encode/DeepSeek-OCR-Web-UI/images/mamorx.png'
+DEBUG: QA with image_path: '/work/projects/mhahsler/course_recomm/allocation001/vision-encode/DeepSeek-OCR-Web-UI/images/mamorx.png'
+The attention mask and the pad token id were not set. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+Setting `pad_token_id` to `eos_token_id`:None for open-end generation.
+=====================
+BASE:  torch.Size([1, 256, 1280])
+PATCHES:  torch.Size([6, 100, 1280])
+=====================
+ The main topic of this document is the Multi-Modal Scientific Review Generation with External Knowledge.
+QA Answer: Error: Model inference returned None...
+Generating summary...
+DEBUG: About to call guided_generation with test_image: '/work/projects/mhahsler/course_recomm/allocation001/vision-encode/DeepSeek-OCR-Web-UI/images/mamorx.png'
+The attention mask and the pad token id were not set. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+Setting `pad_token_id` to `eos_token_id`:None for open-end generation.
+=====================
+BASE:  torch.Size([1, 256, 1280])
+PATCHES:  torch.Size([6, 100, 1280])
+=====================
+The document provides an overview of a study titled "Multi-Modal Scientific Review Generation with External Knowledge." The study aims to generate scientific reviews using various data sources and techniques. The study's objectives include improving the quality of scientific reviews, enhancing the understanding of scientific literature, and providing a comprehensive review of scientific literature. The study also aims to address the challenges of generating scientific reviews, such as the lack of standardized data sources and the difficulty of extracting relevant information from scientific literature. The study also discusses the potential applications of the generated reviews, such as in the field of medicine and healthcare.
+Summary: Error: Model inference returned None...
+Extracting structured data...
+DEBUG: About to call extract_structured_data with test_image: '/work/projects/mhahsler/course_recomm/allocation001/vision-encode/DeepSeek-OCR-Web-UI/images/mamorx.png'
+The attention mask and the pad token id were not set. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+Setting `pad_token_id` to `eos_token_id`:None for open-end generation.
+=====================
+BASE:  torch.Size([1, 256, 1280])
+PATCHES:  torch.Size([6, 100, 1280])
+=====================
+
+- conclusion: Conclusion or summary
+- references: List of references
+- table: Table 1. Comparison of example reviews
+- figure: Figure 1. Comparison of the architectures of different automated review systems
+- table2: Table 2. Comparison of review systems using Elo ratings across different dimensions. Scores are presented as mean ± standard error of the mean.
+- table3: Table 3. Comparison of review systems using Elo ratings for the combined Elo in Table 2. The numbers in the table represent the percentage of times each system is preferred over the others in the pairwise comparisons (the system in the row is preferred over the system in the column)
+- figure2: Figure 2. Comparison of the architectures of different automated review systems
+- figure3: Figure 3. Comparison of the architectures of different automated review systems from the input paper before it is ready to be used by the reviewing agents.
+- table4: Table 4. Comparison of review systems using Elo ratings for the combined Elo in Table 2.
+Structured data: {'error': 'Model inference returned None'}...
+Generating peer review feedback...
+DEBUG: About to call review generation with test_image: '/work/projects/mhahsler/course_recomm/allocation001/vision-encode/DeepSeek-OCR-Web-UI/images/mamorx.png'
+The attention mask and the pad token id were not set. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+Setting `pad_token_id` to `eos_token_id`:None for open-end generation.
+=====================
+BASE:  torch.Size([1, 256, 1280])
+PATCHES:  torch.Size([6, 100, 1280])
+=====================
+ The paper is well-written and easy to understand. The authors have done a good job of summarizing the main findings of the study. The results are presented in a clear and concise manner. The discussion is well-written and provides a thorough analysis of the data. The authors have addressed the limitations of the study and suggested areas for future research. The paper is well-organized and easy to follow. The figures and tables are clear and informative. The text is well-written and free of errors. The paper is well-written and easy to understand. The authors have done a good job of explaining their results. The results are presented in a clear and concise manner. The discussion is well-written and provides an in-depth analysis of the data. The authors have addressed the limitations of the study and suggested areas for future work. The paper is well-organized and easy to follow. The figures and tables are clear and informative.
+
+The paper is well-written and easy to understand. The authors have done a good job of summarizing the key findings of the study. The results are presented in a clear and concise manner. The discussion is clear and well-supported. The paper is well-written and easy to follow. The figures and tables are clear and informative. The text is well-written, error-free, and free of grammatical errors. The paper is well-written and easy to understand. The authors have done a good job in explaining their results. The results are presented in a clear and concise manner. The discussion is well-supported and provides a thorough analysis of the data. The authors have addressed the limitations of the study and suggest areas for future research. The paper is well-organized and easy to follow. The figures and tables clearly illustrate the data. The text is well-written, error-free, and free of grammatical errors. The paper is easy to understand. The authors have done a good job of explaining their results. The results are well-presented and easy to understand. The discussion is well-supported and provides a thorough analysis of the data. The authors have addressed all the limitations of the study and suggest areas for future research. The paper is well-organized and easy for the reader to follow. The figures and tables are clear and informative. The text is well-written, error free, and free of grammatical errors. The paper is easy to understand. The authors have done a thorough job in explaining their results. The results are well-presented and easy to understand. The discussion is well supported and provides a thorough analysis of the data. The authors have addressed all the limitations of the study. The paper is well-organized and easy to follow. The figures and tables are clear and informative, and the text is well-written, error-free, and free of grammatical errors. The paper is easy to read. The authors have done a thorough job in explaining their results. The results are well-presented, easy to understand, and provide a thorough analysis of the data. The discussion is well-supported and provides a thorough analysis of the data. The authors have addressed most of the limitations of the study and suggest areas for future research. The paper is well-organized and easy-to-follow. The figures and tables are clear and informative. The text is well-written, error-free, free of grammatical errors, and easy to understand. The paper is well-organized and easy to follow. The figures and tables are clear and informative and the text is well-written, error-free, free of grammatical errors, and easy to understand. The discussion is well-supported and provides a thorough analysis of the data.
+Review feedback: Error: Model inference returned None...
+Generating detailed review outline...
+DEBUG: About to call detailed review generation with test_image: '/work/projects/mhahsler/course_recomm/allocation001/vision-encode/DeepSeek-OCR-Web-UI/images/mamorx.png'
+The attention mask and the pad token id were not set. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+Setting `pad_token_id` to `eos_token_id`:None for open-end generation.
+=====================
+BASE:  torch.Size([1, 256, 1280])
+PATCHES:  torch.Size([6, 100, 1280])
+=====================
+  
+
+
+**Figure 2: Comparison of the architectures of different automated review systems**
+
+
+**Figure 2: Comparison of the architectures of different automated review systems**
+
+
+**Figure 3: Comparison of the architectures of different automated review systems**
+
+
+**Figure 3: Comparison of architectures of different automated review systems**
+
+
+**Figure 4: Comparison of the architectures of different automated review systems**
+
+
+**Figure 4: Comparison of architectures of different automated review systems**
+
+
+**Figure 5: Comparison of the architectures of different automated review systems**
+
+
+**Figure 5: Comparison of architectures of different automated review systems**
+
+
+**Figure 6: Comparison of the architectures of different automated review systems**
+
+
+**Figure 6: Comparison of architectures of different automated review systems**
+
+
+**Figure 7: Comparison of the architectures of different automated review systems**
+
+
+**Figure 7: Comparison of architectures of different automated review systems**
+
+
+**Figure 8: Comparison of the architectures of different automated review systems**
+
+
+**Figure 8: Comparison of architectures of different automated review systems**
+
+
+**Figure 9: Comparison of the architectures of different automated review systems**
+
+
+**Figure 9: Comparison of architectures of different automated review systems**
+
+
+**Figure 10: Comparison of the architectures of different automated review systems**
+
+
+**Figure 10: Comparison of architectures of different automated review systems**
+
+
+**Figure 11: Comparison of the architectures of different automated review systems**
+
+
+**Figure 11: Comparison of architectures of different automated review systems**
+
+
+**Figure 12: Comparison of the architectures of different automated review systems**
+
+
+**Figure 12: Comparison of architectures of different automated review systems**
+
+
+**Figure 13: Comparison of the architectures of different automated review systems**
+
+
+**Figure 13: Comparison of architectures of different automated review systems**
+
+
+**Figure 14: Comparison of the architectures of different automated review systems**
+
+
+**Figure 14: Comparison of architectures of different automated review systems**
+
+
+**Figure 15: Comparison of the architectures of different automated review systems**
+
+
+**Figure 15: Comparison of architectures of different automated review systems**
+
+
+**Figure 16: Comparison of the architectures of different automated review systems**
+
+
+**Figure 16: Comparison of architectures of different automated review systems**
+
+
+**Figure 17: Comparison of the architectures of different automated review systems**
+
+
+**Figure 17: Comparison of architectures of different automated review systems**
+
+
+**Figure 18: Comparison of the architectures of different automated review systems**
+
+
+**Figure 18: Comparison of architectures of different automated review systems**
+
+
+**Figure 19: Comparison of the architectures of different automated review systems**
+
+
+**Figure 19: Comparison of architectures of different automated review systems**
+
+
+**Figure 20: Comparison of the architectures of different automated review systems**
+
+
+**Figure 20: Comparison of architectures of different automated review systems**
+
+
+**Figure 21: Comparison of the architectures of different automated review systems**
+
+
+**Figure 21: Comparison of architectures of different automated review systems**
+
+
+**Figure 22: Comparison of the architectures of different automated review systems**
+
+
+**Figure 22: Comparison of architectures of different automated review systems**
+
+
+**Figure 23: Comparison of the architectures of different automated review systems**
+
+
+**Figure 23: Comparison of architectures of different automated review systems**
+
+
+**Figure 24: Comparison of the architectures of different automated review systems**
+
+
+**Figure 24: Comparison of architectures of different automated review systems**
+
+
+**Figure 25: Comparison of the architectures of different automated review systems**
+
+
+**Figure 25: Comparison of architectures of different automated review systems**
+
+
+**Figure 26: Comparison of the architectures of different automated review systems**
+
+
+**Figure 26: Comparison of architectures of different automated review systems**
+
+
+**Figure 27: Comparison of the architectures of different automated review systems**
+
+
+**Figure 27: Comparison of architectures of different automated review systems**
+
+
+**Figure 28: Comparison of the architectures of different automated review systems**
+
+
+**Figure 28: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 29: Comparison of the architectures of different automated review systems**
+
+
+**Figure 29: Comparison of the architectures of different automated review systems**
+
+
+
+**Figure 30: Comparison of the architectures of different automated review systems**
+
+
+**Figure 30: Comparison of the architectures of different automated review systems**
+
+
+**Figure 31: Comparison of the architectures of different automated review systems**
+
+
+**Figure 31: Comparison of architectures of different automated review systems**
+
+
+**Figure 32: Comparison of the architectures of different automated review systems**
+
+
+**Figure 32: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 33: Comparison of the architectures of different automated review systems**
+
+
+**Figure 33: Comparison of the architectures of different automated review systems**
+
+
+
+**Figure 34: Comparison of the architectures of different automated review systems**
+
+
+**Figure 34: Comparison of the architectures of different automated review systems**
+
+
+**Figure 35: Comparison of the architectures of different automated review systems**
+
+
+**Figure 35: Comparison of architectures of different automated review systems**
+
+
+**Figure 36: Comparison of the architectures of different automated review systems**
+
+
+**Figure 36: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 37: Comparison of the architectures of different automated review systems**
+
+
+**Figure 37: Comparison of architectures of different automated review systems**
+
+
+**Figure 38: Comparison of the architectures of different automated review systems**
+
+
+**Figure 38: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 39: Comparison of the architectures of different automated review systems**
+
+
+**Figure 39: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 40: Comparison of the architectures of different automated review systems**
+
+
+**Figure 40: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 41: Comparison of the architectures of different automated review systems**
+
+
+**Figure 41: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 42: Comparison of the architectures of different automated review systems**
+
+
+**Figure 42: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 43: Comparison of the architectures of different automated review systems**
+
+
+**Figure 43: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 44: Comparison of the architectures of different automated review systems**
+
+
+**Figure 44: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 45: Comparison of the architectures of different automated review systems**
+
+
+**Figure 45: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 46: Comparison of the architectures of different automated review systems**
+
+
+**Figure 46: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 47: Comparison of the architectures of different automated review systems**
+
+
+**Figure 47: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 48: Comparison of the architectures of different automated review systems**
+
+
+**Figure 48: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 49: Comparison of the architectures of different automated review systems**
+
+
+**Figure 49: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 50: Comparison of the architectures of different automated review systems**
+
+
+**Figure 50: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 51: Comparison of the architectures of different automated review systems**
+
+
+**Figure 51: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 52: Comparison of the architectures of different automated review systems**
+
+
+**Figure 52: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 53: Comparison of the architectures of different automated review systems**
+
+
+**Figure 53: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 54: Comparison of the architectures of different automated review systems**
+
+
+**Figure 54: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 55: Comparison of the architectures of different automated review systems**
+
+
+**Figure 55: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 56: Comparison of the architectures of different automated review systems**
+
+
+**Figure 56: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 57: Comparison of the architectures of different automated review systems**
+
+
+**Figure 57: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 58: Comparison of the architectures of different automated review systems**
+
+
+**Figure 58: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 59: Comparison of the architectures of different automated review systems**
+
+
+**Figure 59: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 60: Comparison of the architectures of different automated review systems**
+
+
+**Figure 60: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 61: Comparison of the architectures of different automated review systems**
+
+
+**Figure 61: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 62: Comparison of the architectures of different automated review systems**
+
+
+**Figure 62: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 63: Comparison of the architectures of different automated review systems**
+
+
+**Figure 63: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 64: Comparison of the architectures of different automated review systems**
+
+
+**Figure 64: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 65: Comparison of the architectures of different automated review systems**
+
+
+**Figure 65: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 66: Comparison of the architectures of different automated review systems**
+
+
+**Figure 66: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 67: Comparison of the architectures of different automated review systems**
+
+
+**Figure 67: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 68: Comparison of the architectures of different automated review systems**
+
+
+**Figure 68: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 69: Comparison of the architectures of different automated review systems**
+
+
+**Figure 69: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 70: Comparison of the architectures of different automated review systems**
+
+
+**Figure 70: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 71: Comparison of the architectures of different automated review systems**
+
+
+**Figure 71: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 72: Comparison of the architectures of different automated review systems**
+
+
+**Figure 72: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 73: Comparison of the architectures of different automated review systems**
+
+
+**Figure 73: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 74: Comparison of the architectures of different automated review systems**
+
+
+**Figure 74: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 75: Comparison of the architectures of different automated review systems**
+
+
+**Figure 75: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 76: Comparison of the architectures of different automated review systems**
+
+
+**Figure 76: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 77: Comparison of the architectures of different automated review systems**
+
+
+**Figure 77: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 78: Comparison of the architectures of different automated review systems**
+
+
+**Figure 78: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 79: Comparison of the architectures of different automated review systems**
+
+
+**Figure 79: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 80: Comparison of the architectures of different automated review systems**
+
+
+**Figure 80: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 81: Comparison of the architectures of different automated review systems**
+
+
+**Figure 81: Comparison of the architectures of different Automated review systems**
+
+
+**Figure 82: Comparison of the architectures of different automated review systems**
+
+
+**Figure 82: Comparison of the architectures of ^C
+Execution interrupted by user
+GPU cache cleared

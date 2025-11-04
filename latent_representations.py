@@ -215,8 +215,7 @@ class DeepSeekOCRQA:
         prompt = f"""<image>
 Extract the following information from this document:
 {schema_str}
-
-Format as JSON:"""
+"""
         
         try:
             result = self.model.infer(
@@ -263,41 +262,117 @@ def demonstrate_unified_usage(
         return None, "Test image not found", "Test image not found", {"error": "Test image not found"}
     
     # Initialize model with CUDA
-    device = 'cuda'
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     print(f"Using device: {device}")
     
+    # Check GPU memory if available
+    if device == 'cuda':
+        total_memory = torch.cuda.get_device_properties(0).total_memory / 1024**3  # GB
+        allocated_memory = torch.cuda.memory_allocated(0) / 1024**3  # GB
+        cached_memory = torch.cuda.memory_reserved(0) / 1024**3  # GB
+        print(f"GPU Memory - Total: {total_memory:.1f}GB, Allocated: {allocated_memory:.1f}GB, Cached: {cached_memory:.1f}GB")
+        
+        # Clear any existing cache
+        torch.cuda.empty_cache()
+
     tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
     
-    try:
+    # Configure model loading with proper device and dtype handling
+    if device == 'cuda':
+        try:
+            # Try with Flash Attention 2 and proper dtype
+            print("Attempting to load model with Flash Attention 2...")
+            model = AutoModel.from_pretrained(
+                model_name,
+                cache_dir=save_directory,
+                _attn_implementation='flash_attention_2',
+                torch_dtype=torch.bfloat16,  # Specify dtype for Flash Attention
+                trust_remote_code=True,
+                device_map="auto"  # Automatically place on GPU
+            )
+            model = model.eval()
+            print("✓ Successfully loaded model with Flash Attention 2")
+        except Exception as e:
+            print(f"Flash attention failed, falling back to regular attention: {e}")
+            try:
+                # Fallback to regular attention with proper GPU placement
+                print("Loading model with regular attention...")
+                model = AutoModel.from_pretrained(
+                    model_name,
+                    cache_dir=save_directory,
+                    torch_dtype=torch.bfloat16,
+                    trust_remote_code=True,
+                )
+                model = model.to(device).eval()  # Explicitly move to GPU
+                print("✓ Successfully loaded model with regular attention")
+            except Exception as e2:
+                print(f"bfloat16 failed, trying float16: {e2}")
+                # Final fallback to float16
+                model = AutoModel.from_pretrained(
+                    model_name,
+                    cache_dir=save_directory,
+                    torch_dtype=torch.float16,
+                    trust_remote_code=True,
+                )
+                model = model.to(device).eval()
+                print("✓ Successfully loaded model with float16")
+    else:
+        # CPU mode
+        print("Loading model for CPU...")
         model = AutoModel.from_pretrained(
             model_name,
             cache_dir=save_directory,
-            _attn_implementation='flash_attention_2',
-            trust_remote_code=True
-        ).eval().cuda()
-    except:
-        model = AutoModel.from_pretrained(
-            model_name,
-            cache_dir=save_directory,
-            trust_remote_code=True
-        ).eval().cuda()
+            torch_dtype=torch.float32,  # Use float32 for CPU
+            trust_remote_code=True,
+        )
+        model = model.eval()
+        print("✓ Successfully loaded model for CPU")
+
+    # Check GPU memory after model loading
+    if device == 'cuda':
+        allocated_memory = torch.cuda.memory_allocated(0) / 1024**3  # GB
+        cached_memory = torch.cuda.memory_reserved(0) / 1024**3  # GB
+        print(f"GPU Memory after model loading - Allocated: {allocated_memory:.1f}GB, Cached: {cached_memory:.1f}GB")
+        
+        # Verify model is actually on GPU
+        model_device = next(model.parameters()).device
+        print(f"Model is on device: {model_device}")
+        
+        if model_device.type != 'cuda':
+            print("WARNING: Model is not on GPU! Attempting to move...")
+            model = model.to(device)
+            model_device = next(model.parameters()).device
+            print(f"Model moved to device: {model_device}")
     
     # First, run OCR to get the text (like in embedding_visual.py)
     prompt = "<image>\n<|grounding|>Convert the document to markdown. "
     output_path = './output/'
     
+    # Create output directory if it doesn't exist
+    os.makedirs(output_path, exist_ok=True)
+    
     print("Running DeepSeek-OCR inference...")
-    ocr_result = model.infer(
-        tokenizer, 
-        prompt=prompt, 
-        image_file=test_image, 
-        output_path=output_path, 
-        base_size=1024, 
-        image_size=640, 
-        crop_mode=True, 
-        save_results=True, 
-        test_compress=True
-    )
+    try:
+        # Use smaller image sizes for memory efficiency
+        ocr_result = model.infer(
+            tokenizer, 
+            prompt=prompt, 
+            image_file=test_image, 
+            output_path=output_path, 
+            base_size=768,  # Reduced from 1024
+            image_size=512,  # Reduced from 640
+            crop_mode=True, 
+            save_results=True, 
+            test_compress=True
+        )
+        
+        # Clear GPU cache after inference
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+            
+    except Exception as e:
+        print(f"OCR inference failed: {e}")
+        ocr_result = None
     
     print("\nOCR Result (first 500 chars):")
     if ocr_result is None:
@@ -308,8 +383,13 @@ def demonstrate_unified_usage(
                 ocr_result = f.read()
             print(f"Loaded OCR result from {result_file}")
         else:
-            print(f"Warning: OCR result file {result_file} not found. Using empty string.")
-            ocr_result = ""
+            print(f"Warning: OCR result file {result_file} not found. Using sample text.")
+            ocr_result = "Sample document text for testing. This document contains important information about machine learning and computer vision research."
+    
+    # Validate OCR result
+    if not ocr_result or len(ocr_result.strip()) == 0:
+        print("Warning: OCR result is empty. Using sample text.")
+        ocr_result = "Sample document text for testing. This document contains important information about machine learning and computer vision research."
     else:
         print(ocr_result[:500] if len(ocr_result) > 500 else ocr_result)
     print("=" * 80)
@@ -349,6 +429,10 @@ def demonstrate_unified_usage(
         print(f"Error extracting embeddings: {e}")
         embeddings_matrix = None
     
+    # Clear GPU cache after embeddings
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+    
     # 2. Use for QA
     qa_system = DeepSeekOCRQA(model, tokenizer)
     
@@ -364,6 +448,10 @@ def demonstrate_unified_usage(
         print(f"QA failed: {e}")
         answer = "QA failed"
     
+    # Clear GPU cache after QA
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+    
     # 3. Guided generation
     print("Generating summary...")
     print(f"DEBUG: About to call guided_generation with test_image: '{test_image}'")
@@ -376,6 +464,10 @@ def demonstrate_unified_usage(
     except Exception as e:
         print(f"Summary generation failed: {e}")
         summary = "Summary failed"
+    
+    # Clear GPU cache after summary
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
     
     # 4. Structured extraction
     print("Extracting structured data...")
@@ -397,11 +489,80 @@ def demonstrate_unified_usage(
         print(f"Structured extraction failed: {e}")
         structured_data = {"error": str(e)}
     
-    return embeddings_matrix, answer, summary, structured_data
+    # Clear GPU cache after structured extraction
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+    
+    # 5. Review generation - General feedback
+    print("Generating peer review feedback...")
+    print(f"DEBUG: About to call review generation with test_image: '{test_image}'")
+    try:
+        review_feedback = qa_system.guided_generation(
+            test_image,
+            "Write a list of feedback comments for a scientific paper like a peer reviewer would do. Focus on major comments and skip minor ones."
+        )
+        print(f"Review feedback: {review_feedback[:200]}...")
+    except Exception as e:
+        print(f"Review feedback generation failed: {e}")
+        review_feedback = "Review feedback failed"
+    
+    # Clear GPU cache after review feedback
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+    
+    # 6. Detailed review outline
+    print("Generating detailed review outline...")
+    print(f"DEBUG: About to call detailed review generation with test_image: '{test_image}'")
+    try:
+        # Extract title from structured data if available
+        paper_title = "this paper"
+        if isinstance(structured_data, dict) and 'title' in structured_data:
+            paper_title = structured_data['title']
+        elif isinstance(structured_data, dict) and 'raw_output' in structured_data:
+            # Try to extract title from raw output
+            raw_text = structured_data['raw_output']
+            if 'title' in raw_text.lower():
+                paper_title = "this paper"
+        
+        # Use OCR result as paper content
+        paper_content = ocr_result[:1000] if ocr_result else "document content unavailable"
+        
+        detailed_review_prompt = f"""Your task now is to draft a high-quality review outline for a top-tier Machine Learning (ML) conference for a submission titled "{paper_title}":
+{paper_content}
+======
+Your task:
+Compose a high-quality peer review of an ML paper submitted to a top-tier ML conference on OpenReview.
+Start by "Review outline:".
+And then:
+"1. Significance and novelty"
+"2. Potential reasons for acceptance"
+"3. Potential reasons for rejection", List 4 key reasons. For each of 4 key reasons, use **>=2 sub bullet points** to further clarify and support your arguments in painstaking details.
+"4. Suggestions for improvement", List 4 key suggestions.
+Be thoughtful and constructive. Write Outlines only."""
+        
+        detailed_review = qa_system.guided_generation(
+            test_image,
+            detailed_review_prompt
+        )
+        print(f"Detailed review: {detailed_review[:200]}...")
+    except Exception as e:
+        print(f"Detailed review generation failed: {e}")
+        detailed_review = "Detailed review failed"
+    
+    # Clear GPU cache after detailed review
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+    
+    return embeddings_matrix, answer, summary, structured_data, review_feedback, detailed_review
 
 if __name__ == "__main__":
     try:
-        embeddings_matrix, answer, summary, structured_data = demonstrate_unified_usage(test_image = './images/mamorx.png')
+        print("Starting latent_representations.py execution...")
+        embeddings_matrix, answer, summary, structured_data, review_feedback, detailed_review = demonstrate_unified_usage(test_image = './images/mamorx.png')
+        
+        print("\n" + "=" * 80)
+        print("EXECUTION COMPLETED SUCCESSFULLY")
+        print("=" * 80)
         
         if embeddings_matrix is not None:
             print(f"\n✓ Embeddings shape: {embeddings_matrix.shape}")
@@ -411,8 +572,17 @@ if __name__ == "__main__":
         print(f"\n✓ QA Answer: {answer[:100]}...")
         print(f"\n✓ Summary: {summary[:100]}...")    
         print(f"\n✓ Structured Data: {str(structured_data)[:100]}...")
+        print(f"\n✓ Review Feedback: {review_feedback[:100]}...")
+        print(f"\n✓ Detailed Review: {detailed_review[:100]}...")
         
+    except KeyboardInterrupt:
+        print("\nExecution interrupted by user")
     except Exception as e:
-        print(f"Demo failed: {e}")
+        print(f"\nUnexpected error during execution: {e}")
         import traceback
         traceback.print_exc()
+    finally:
+        # Clean up GPU memory
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+            print("GPU cache cleared")

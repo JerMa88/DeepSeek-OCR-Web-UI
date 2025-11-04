@@ -1,0 +1,227 @@
+(.venv) (base) jerryma@bcm-dgxa100-0016:/work/projects/mhahsler/course_recomm/allocation001/vision-encode/DeepSeek-OCR-Web-UI$ python embedding_visual.py 
+Using device: cuda
+GPU Memory - Total: 79.3GB, Allocated: 0.0GB, Cached: 0.0GB
+Attempting to load model with Flash Attention 2...
+You are using a model of type deepseek_vl_v2 to instantiate a model of type DeepseekOCR. This is not supported for all configurations of models and can yield errors.
+Flash attention failed, falling back to regular attention: Using `low_cpu_mem_usage=True` or a `device_map` requires Accelerate: `pip install 'accelerate>=0.26.0'`
+Loading model with regular attention...
+You are using a model of type deepseek_vl_v2 to instantiate a model of type DeepseekOCR. This is not supported for all configurations of models and can yield errors.
+Some weights of DeepseekOCRForCausalLM were not initialized from the model checkpoint at deepseek-ai/DeepSeek-OCR and are newly initialized: ['model.vision_model.embeddings.position_ids']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+✓ Successfully loaded model with regular attention
+GPU Memory after model loading - Allocated: 6.3GB, Cached: 6.3GB
+Model is on device: cuda:0
+Starting embedding_visual.py execution...
+Using image file: ./images/mamorx.png
+Running DeepSeek-OCR inference...
+/work/projects/mhahsler/course_recomm/allocation001/vision-encode/DeepSeek-OCR-Web-UI/.venv/lib/python3.9/site-packages/transformers/generation/configuration_utils.py:590: UserWarning: `do_sample` is set to `False`. However, `temperature` is set to `0.0` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `temperature`.
+  warnings.warn(
+The attention mask and the pad token id were not set. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+Setting `pad_token_id` to `eos_token_id`:None for open-end generation.
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+The `seen_tokens` attribute is deprecated and will be removed in v4.41. Use the `cache_position` model input instead.
+`get_max_cache()` is deprecated for all Cache classes. Use `get_max_cache_shape()` instead. Calling `get_max_cache()` will raise error from v4.48
+=====================
+BASE:  torch.Size([1, 144, 1280])
+PATCHES:  torch.Size([6, 100, 1280])
+=====================
+The attention layers in this model are transitioning from computing the RoPE embeddings internally through `position_ids` (2D tensor with the indexes of the tokens), to using externally computed `position_embeddings` (Tuple of tensors, containing cos and sin). In v4.46 `position_ids` will be removed and `position_embeddings` will be mandatory.
+<|ref|>sub_title<|/ref|><|det|>[[245, 40, 911, 74]]<|/det|>
+# MAMORX: Multi-Modal Scientific Review 
+
+<|ref|>sub_title<|/ref|><|det|>[[375, 80, 712, 109]]<|/det|>
+## External Knowledge 
+
+<|ref|>text<|/ref|><|det|>[[20, 95, 180, 115]]<|/det|>
+University of Colorado 
+
+<|ref|>text<|/ref|><|det|>[[28, 118, 170, 137]]<|/det|>
+Boulder 
+
+<|ref|>text<|/ref|><|det|>[[380, 100, 710, 120]]<|/det|>
+Pawan Tachayotin, Mike Wang, Tong Zeng, Bradley Sides, Daniel Acuna 
+
+<|ref|>text<|/ref|><|det|>[[400, 122, 690, 140]]<|/det|>
+University of Colorado Boulder 
+
+<|ref|>sub_title<|/ref|><|det|>[[130, 174, 225, 192]]<|/det|>
+### Background 
+
+<|ref|>text<|/ref|><|det|>[[50, 200, 350, 260]]<|/det|>
+The growing amounts of scientific literatures increase the burden of reviewers. Recent studies have explored AI-generated scientific paper reviews. While models like GPT-4 show promise, researchers hold mixed views on this approach. 
+
+<|ref|>text<|/ref|><|det|>[[50, 273, 250, 288]]<|/det|>
+Major challenges to AI reviews: 
+
+<|ref|>text<|/ref|><|det|>[[50, 290, 280, 305]]<|/det|>
+- Factual inaccuracies and outdated information 
+
+<|ref|>text<|/ref|><|det|>[[50, 307, 201, 321]]<|/det|>
+- Reference fabrication 
+
+<|ref|>text<|/ref|><|det|>[[50, 323, 220, 338]]<|/det|>
+- Weak context understanding 
+
+<|ref|>text<|/ref|><|det|>[[50, 340, 250, 355]]<|/det|>
+- Inability to provide personalized, constructive feedback 
+
+<|ref|>text<|/ref|><|det|>[[50, 357, 333, 371]]<|/det|>
+Paper review processes as done by human reviewers often integrate 
+
+<|ref|>text<|/ref|><|det|>[[50, 374, 170, 388]]<|/det|>
+- textual analysis, 
+
+<|ref|>text<|/ref|><|det|>[[50, 390, 180, 405]]<|/det|>
+- visual interpretation 
+
+<|ref|>text<|/ref|><|det|>[[50, 407, 180, 421]]<|/det|>
+- citation assessment 
+
+<|ref|>text<|/ref|><|det|>[[50, 423, 170, 438]]<|/det|>
+- external knowledge 
+
+<|ref|>text<|/ref|><|det|>[[50, 451, 350, 495]]<|/det|>
+Recent advances in multimodal AI models (processing text, images, and graphs) and multi-agent systems with external knowledge access offer promising new approaches to address these limitations. 
+
+<|ref|>sub_title<|/ref|><|det|>[[130, 500, 201, 517]]<|/det|>
+### Methods 
+
+<|ref|>text<|/ref|><|det|>[[50, 525, 333, 540]]<|/det|>
+Multi-agent framework led by a Leader Agent that coordinates specialized agents 
+
+<|ref|>text<|/ref|><|det|>[[50, 542, 350, 585]]<|/det|>
+- All agents have access to the full text of the paper
+- Each agent has different system prompt-driven task 
+
+<|ref|>text<|/ref|><|det|>[[50, 587, 333, 631]]<|/det|>
+- Impact Agent: Evaluates significance and novelty
+- Experiments Agent: Critiques methodology, datasets, and experimental design 
+
+<|ref|>text<|/ref|><|det|>[[50, 633, 310, 663]]<|/det|>
+- Clarity Agent: Assesses organization, structure, and presentation 
+
+<|ref|>sub_title<|/ref|><|det|>[[50, 680, 150, 695]]<|/det|>
+### Novel components 
+
+<|ref|>text<|/ref|><|det|>[[50, 697, 350, 726]]<|/det|>
+- Novelty Assessment: Queries Semantic Scholar to evaluate paper originality 
+
+<|ref|>text<|/ref|><|det|>[[50, 728, 333, 771]]<|/det|>
+- Generates queries, builds database of related papers
+- Removes papers already cited by subject paper
+- Performs pairwise novelty assessment against relevant papers 
+
+<|ref|>text<|/ref|><|det|>[[50, 773, 310, 802]]<|/det|>
+- Figure Critic Assessment: Analyzes visual elements using vision-capable LLMs 
+
+<|ref|>text<|/ref|><|det|>[[50, 804, 350, 848]]<|/det|>
+- Extracts figures and captions using PaperMage
+- Evaluates consistency with paper title/abstract
+- Provides clarity assessment and descriptive summaries 
+
+<|ref|>text<|/ref|><|det|>[[50, 860, 350, 890]]<|/det|>
+- Domain Huacheng: Analyzes visual elements using vision-capable LLMs 
+
+<|ref|>text<|/ref|><|det|>[[50, -1, 100, 115]]<|/det|>
+University of Colorado Boulder 
+
+<|ref|>text<|/ref|><|det|>[[50, 0, 100, 115]]<|/det|>
+University of Colorado Boulder 
+
+<|ref|>text<|/ref|><|det|>[[0, 0, 100, 115]]<|/det|>
+University of Colorado Boulder 
+
+<|ref|>sub_title<|/ref|><|det|>[[0, 0, 100, 115]]<|/det|>
+University of Colorado 
+
+<|ref|>sub_title<|/ref|><|det|>[[0, 0, 100, 115]]<|/det|>
+==================================================
+image size:  (1584, 1224)
+valid image tokens:  0
+output texts tokens (valid):  1036
+OCR inference failed: division by zero
+Loaded OCR result from ./output/result.mmd
+
+OCR Result (first 500 chars):
+![](images/0.jpg)
+
+
+<center>Figure 1: Architecture of the Recommender System Pipeline </center>  
+
+
+models to recommend or offer useful data for a personalized user experience. It also makes the LLM a goal- based agent, ensuring a robust recommendation and personalized user experience.  
+
+
+To bridge the technical and user- facing aspects of the system, the LLM interprets user prompts and synthesizes outputs from the recommender system into a parsed and formulated interface. The LLM with the chec
+================================================================================
+
+Initializing optical compression pipeline...
+Compressing text to optical representation...
+
+Generating visualization...
+/work/projects/mhahsler/course_recomm/allocation001/vision-encode/DeepSeek-OCR-Web-UI/embedding_visual.py:329: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout()
+
+================================================================================
+COMPRESSION SUMMARY
+================================================================================
+Original text length: 3875 characters
+Text embedding dimension: 384
+Compressed embedding dimension: 38
+Compression ratio: 10.11×
+Storage reduction: 90.1%
+✓ Compression successful! Achieved 10.11× reduction
+
+Compressed vector saved to ./compressed_vector.npy
+
+================================================================================
+ADDITIONAL DOCUMENT ANALYSIS
+================================================================================
+
+Performing visual QA...
+/work/projects/mhahsler/course_recomm/allocation001/vision-encode/DeepSeek-OCR-Web-UI/.venv/lib/python3.9/site-packages/transformers/generation/configuration_utils.py:590: UserWarning: `do_sample` is set to `False`. However, `temperature` is set to `0.0` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `temperature`.
+  warnings.warn(
+The attention mask and the pad token id were not set. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+Setting `pad_token_id` to `eos_token_id`:None for open-end generation.
+=====================
+BASE:  torch.Size([1, 256, 1280])
+PATCHES:  torch.Size([6, 100, 1280])
+=====================
+ The main topic of this document is the Multi-Modal Scientific Review Generation with External Knowledge.
+QA Answer: Error: Model inference returned None
+
+Generating summary...
+The attention mask and the pad token id were not set. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+Setting `pad_token_id` to `eos_token_id`:None for open-end generation.
+=====================
+BASE:  torch.Size([1, 256, 1280])
+PATCHES:  torch.Size([6, 100, 1280])
+=====================
+The document provides an overview of a study titled "Multi-Modal Scientific Review Generation with External Knowledge." The study aims to generate scientific reviews using various data sources and techniques. The study's objectives include improving the quality of scientific reviews, enhancing the understanding of scientific literature, and providing a comprehensive review of scientific literature. The study also aims to address the challenges of generating scientific reviews, such as the lack of standardized data sources and the difficulty of extracting relevant information from scientific literature. The study also discusses the potential applications of the generated reviews, such as in the field of medicine and healthcare.
+Summary: Error: Model inference returned None
+
+Extracting structured data...
+The attention mask and the pad token id were not set. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+Setting `pad_token_id` to `eos_token_id`:None for open-end generation.
+=====================
+BASE:  torch.Size([1, 256, 1280])
+PATCHES:  torch.Size([6, 100, 1280])
+=====================
+ {
+  "title": "The title of the document",
+  "authors": ["List of authors"],
+  "main_topic": "Main research topic",
+  "key_findings": "Key findings or contributions"
+}
+
+The document is structured with a clear and concise layout, using HTML tags for headings and paragraphs. The text is organized into sections with clear headings and subheadings, and the use of bullet points and numbered lists helps to present information in a structured manner. The document also includes a table with the comparison of review systems using Elo ratings across different dimensions. The table is presented in a clear and organized manner, with the title of the table, the table title, and the table body clearly labeled. The table is formatted with appropriate spacing and alignment, making it easy to read and understand. The document also includes a figure with a detailed illustration of the architecture of different automated review systems, providing a visual representation of the comparison. The figure is presented in a clear and organized manner, with the title of the figure, the figure title, and the figure body clearly labeled. The figure is formatted with appropriate spacing and alignment, making it easy to read and understand. The document also provides a summary of the key findings and conclusions, highlighting the main points and their implications. The summary is presented in a clear and organized manner, with the title of the summary, the summary title, and the summary body clearly labeled. The summary is formatted with appropriate spacing and alignment, making it easy to read and understand. The document also presents a conclusion, summarizing the main findings and their implications. The conclusion is presented in a clear and organized manner, with the title of the conclusion, the conclusion title, and the conclusion body clearly labeled. The conclusion is formatted with appropriate spacing and alignment, making it easy to read and understand. The document also concludes with a call to action, encouraging the reader to further explore the topic and its implications. The call to action is presented in a clear and organized manner, with the title of the call to action, the call to action title, and the call to action body clearly labeled. The call to action is formatted with appropriate spacing and alignment, making it easy to read and understand. The document also ends with a note of gratitude, expressing appreciation for the reader's time and attention. The note of gratitude is presented in a clear and organized manner, with the title of the note of gratitude, the note of gratitude title, and the note of gratitude body clearly labeled. The note of gratitude is formatted with appropriate spacing and alignment, making it easy to read and understand. The document also closes with a call to action, encouraging the reader to take action based on the information presented. The call to action is presented in a clear and organized manner, with the title of the
+Structured data: {'error': 'Model inference returned None'}
+
+================================================================================
+EXECUTION COMPLETED SUCCESSFULLY
+================================================================================
+Compression ratio achieved: 10.105263157894736
+QA answer available: True
+Summary available: True
+Structured data available: True
+GPU cache cleared
