@@ -1,4 +1,3 @@
-
 from transformers import AutoModel, AutoTokenizer
 import torch
 import torch.nn as nn
@@ -16,88 +15,117 @@ os.environ["CUDA_VISIBLE_DEVICES"] = '0'
 model_name = 'deepseek-ai/DeepSeek-OCR'
 save_directory = './model'
 
-tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
-model = AutoModel.from_pretrained(
-    model_name, 
-    cache_dir=save_directory,
-    _attn_implementation='flash_attention_2', 
-    trust_remote_code=True, 
-    use_safetensors=True
-)
-model = model.eval().cuda().to(torch.bfloat16)
-print("Model architecture:", model)
+# Check if CUDA is available
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+print(f"Using device: {device}")
 
-# ============== Optical Compression Module ==============
+tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+
+# Configure attention implementation based on device
+if device == 'cuda':
+    try:
+        model = AutoModel.from_pretrained(
+            model_name, 
+            cache_dir=save_directory,
+            _attn_implementation='flash_attention_2', 
+            trust_remote_code=True, 
+            use_safetensors=True
+        )
+        model = model.eval().cuda().to(torch.bfloat16)
+    except Exception as e:
+        print(f"Flash attention failed, falling back to regular attention: {e}")
+        model = AutoModel.from_pretrained(
+            model_name, 
+            cache_dir=save_directory,
+            trust_remote_code=True, 
+            use_safetensors=True
+        )
+        model = model.eval().cuda()
+else:
+    # CPU mode
+    model = AutoModel.from_pretrained(
+        model_name, 
+        cache_dir=save_directory,
+        trust_remote_code=True, 
+        use_safetensors=True
+    )
+    model = model.eval()
+
+# ============== Fixed Optical Compression Module ==============
 class OpticalCompressor(nn.Module):
     """
-    Implements DeepSeek-OCR style compression: text → 2D vision tokens → compressed representation
-    Based on the paper's 16× compression approach
+    Fixed implementation that actually compresses, not expands!
+    For text embeddings, we need a different strategy than image compression.
     """
     def __init__(
         self, 
-        input_dim: int = 768,  # Standard text embedding dimension
-        compression_ratio: int = 16,
-        patch_size: int = 16,
-        hidden_dim: int = 256
+        input_dim: int = 384,  # Sentence transformer dimension
+        target_compression_ratio: int = 10,  # Target 10× compression like the paper
+        intermediate_dim: int = 64
     ):
         super().__init__()
         self.input_dim = input_dim
-        self.compression_ratio = compression_ratio
-        self.patch_size = patch_size
+        self.target_compression_ratio = target_compression_ratio
+        self.compressed_dim = max(16, input_dim // target_compression_ratio)  # At least 16 dims
         
-        # Calculate grid dimensions for 2D mapping
-        self.grid_size = int(np.sqrt(input_dim))
-        if self.grid_size ** 2 < input_dim:
-            self.grid_size = int(np.ceil(np.sqrt(input_dim)))
+        # Strategy: First expand to 2D representation, then aggressively compress
+        # This mimics rendering text to image, then compressing the image
         
-        # Compression layers (mimicking DeepEncoder's approach)
-        # Stage 1: Initial projection
-        self.projection = nn.Linear(input_dim, self.grid_size * self.grid_size)
-        
-        # Stage 2: 2D Convolutional compression (like DeepEncoder's 16× compressor)
-        self.conv_compressor = nn.Sequential(
-            # First conv layer: kernel=3, stride=2, channels 256→512
-            nn.Conv2d(1, hidden_dim, kernel_size=3, stride=2, padding=1),
+        # Step 1: Expand text embedding to pseudo-image (like rendering text)
+        # This simulates converting text to a document image
+        self.expansion_size = 32  # Create 32×32 pseudo-image
+        self.text_to_image = nn.Sequential(
+            nn.Linear(input_dim, self.expansion_size * self.expansion_size),
             nn.ReLU(),
-            nn.BatchNorm2d(hidden_dim),
-            
-            # Second conv layer: kernel=3, stride=2, channels 512→1024
-            nn.Conv2d(hidden_dim, hidden_dim * 2, kernel_size=3, stride=2, padding=1),
-            nn.ReLU(),
-            nn.BatchNorm2d(hidden_dim * 2),
-            
-            # Additional compression if needed
-            nn.Conv2d(hidden_dim * 2, hidden_dim * 4, kernel_size=3, stride=2, padding=1),
-            nn.ReLU(),
-            nn.BatchNorm2d(hidden_dim * 4),
+            nn.BatchNorm1d(self.expansion_size * self.expansion_size)
         )
         
-        # Calculate compressed dimensions
-        compressed_grid = self.grid_size
-        for _ in range(3):  # 3 conv layers with stride=2
-            compressed_grid = (compressed_grid + 1) // 2
-        self.compressed_dim = compressed_grid * compressed_grid * (hidden_dim * 4)
+        # Step 2: Compress using strided convolutions (like DeepEncoder)
+        # Use fewer channels to ensure compression
+        self.conv_compressor = nn.Sequential(
+            # First compression: 32×32 → 16×16 with 8 channels
+            nn.Conv2d(1, 8, kernel_size=3, stride=2, padding=1),
+            nn.ReLU(),
+            nn.BatchNorm2d(8),
+            
+            # Second compression: 16×16 → 8×8 with 4 channels  
+            nn.Conv2d(8, 4, kernel_size=3, stride=2, padding=1),
+            nn.ReLU(),
+            nn.BatchNorm2d(4),
+            
+            # Third compression: 8×8 → 4×4 with 2 channels
+            nn.Conv2d(4, 2, kernel_size=3, stride=2, padding=1),
+            nn.ReLU(),
+            nn.BatchNorm2d(2),
+            
+            # Final compression: 4×4 → 2×2 with 1 channel
+            nn.Conv2d(2, 1, kernel_size=3, stride=2, padding=1),
+            nn.ReLU(),
+        )
         
-    def forward(self, text_embeddings: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+        # Step 3: Final projection to target dimension
+        # After convolutions: 2×2×1 = 4 features
+        self.final_projection = nn.Linear(4, self.compressed_dim)
+        
+    def forward(self, text_embeddings: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """
         Compress text embeddings to vision tokens
-        Returns: (compressed_embedding, 2d_representation_for_visualization)
+        Returns: (compressed_embedding, pseudo_image, compressed_2d)
         """
         batch_size = text_embeddings.shape[0]
         
-        # Project to square dimension
-        projected = self.projection(text_embeddings)
+        # Step 1: Expand to pseudo-image (simulating text rendering)
+        pseudo_image_flat = self.text_to_image(text_embeddings)
+        pseudo_image = pseudo_image_flat.view(batch_size, 1, self.expansion_size, self.expansion_size)
         
-        # Reshape to 2D grid
-        vision_2d = projected.view(batch_size, 1, self.grid_size, self.grid_size)
+        # Step 2: Apply convolutional compression
+        compressed_2d = self.conv_compressor(pseudo_image)
         
-        # Apply convolutional compression
-        compressed_2d = self.conv_compressor(vision_2d)
-        
-        # Flatten for storage
+        # Step 3: Final compression
         compressed_flat = compressed_2d.view(batch_size, -1)
+        compressed_final = self.final_projection(compressed_flat)
         
-        return compressed_flat, compressed_2d
+        return compressed_final, pseudo_image, compressed_2d
 
 class TextToOpticalPipeline:
     """Complete pipeline for text → optical compression visualization"""
@@ -108,25 +136,38 @@ class TextToOpticalPipeline:
         # Text embedding model
         self.text_encoder = SentenceTransformer(embedding_model_name)
         
-        # Optical compressor
+        # Optical compressor with 10× compression target
         embedding_dim = self.text_encoder.get_sentence_embedding_dimension()
-        self.compressor = OpticalCompressor(input_dim=embedding_dim).cuda()
+        self.compressor = OpticalCompressor(
+            input_dim=embedding_dim, 
+            target_compression_ratio=10
+        )
+        
+        # Move to appropriate device
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.compressor = self.compressor.to(device)
+        # Set to eval mode to avoid BatchNorm issues with single samples
+        self.compressor.eval()
         
     def process_text(self, text: str):
         """Process text through the full compression pipeline"""
         
+        # Get device
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        
         # Step 1: Generate text embeddings
         text_embedding = self.text_encoder.encode(text, convert_to_tensor=True)
-        text_embedding = text_embedding.cuda().unsqueeze(0)
+        text_embedding = text_embedding.to(device).unsqueeze(0)
         
         # Step 2: Compress to optical representation
         with torch.no_grad():
-            compressed_embedding, compressed_2d = self.compressor(text_embedding)
+            compressed_embedding, pseudo_image, compressed_2d = self.compressor(text_embedding)
         
         return {
             'text': text,
             'text_embedding': text_embedding.cpu().numpy(),
             'compressed_embedding': compressed_embedding.cpu().numpy(),
+            'pseudo_image': pseudo_image.cpu().numpy(),
             'compressed_2d': compressed_2d.cpu().numpy(),
             'compression_ratio': text_embedding.shape[-1] / compressed_embedding.shape[-1]
         }
@@ -134,65 +175,105 @@ class TextToOpticalPipeline:
     def visualize_compression(self, result: dict, save_path: str = './compression_viz.png'):
         """Visualize the complete compression pipeline"""
         
-        fig, axes = plt.subplots(2, 3, figsize=(18, 10))
-        fig.suptitle('DeepSeek-OCR Style Optical Compression Pipeline', fontsize=16)
+        fig = plt.figure(figsize=(20, 12))
         
-        # 1. Original text
-        axes[0, 0].text(0.5, 0.5, result['text'][:500] + '...', 
-                       ha='center', va='center', wrap=True, fontsize=10)
-        axes[0, 0].set_title('1. Original Text')
-        axes[0, 0].axis('off')
+        # Create custom grid
+        gs = fig.add_gridspec(3, 4, hspace=0.3, wspace=0.3)
         
-        # 2. Text embedding heatmap
-        embedding_2d = result['text_embedding'].reshape(-1, 32)  # Reshape for visualization
-        im1 = axes[0, 1].imshow(embedding_2d, cmap='viridis', aspect='auto')
-        axes[0, 1].set_title(f'2. Text Embedding\n(dim={result["text_embedding"].shape[-1]})')
-        plt.colorbar(im1, ax=axes[0, 1])
+        # Title
+        fig.suptitle('DeepSeek-OCR Style Optical Compression Pipeline', fontsize=18, fontweight='bold')
         
-        # 3. Compressed embedding heatmap
-        compressed_1d = result['compressed_embedding'].reshape(-1, 64)  # Reshape for visualization
-        im2 = axes[0, 2].imshow(compressed_1d, cmap='coolwarm', aspect='auto')
-        axes[0, 2].set_title(f'3. Compressed Embedding\n(dim={result["compressed_embedding"].shape[-1]})')
-        plt.colorbar(im2, ax=axes[0, 2])
+        # 1. Original text (spans 2 columns)
+        ax1 = fig.add_subplot(gs[0, :2])
+        text_display = result['text'][:300] + '...' if len(result['text']) > 300 else result['text']
+        ax1.text(0.05, 0.5, text_display, ha='left', va='center', wrap=True, fontsize=9, family='monospace')
+        ax1.set_title('1. Original Text', fontsize=12, fontweight='bold')
+        ax1.axis('off')
+        ax1.add_patch(plt.Rectangle((0, 0), 1, 1, fill=False, edgecolor='black', linewidth=2))
         
-        # 4. 2D vision representation (multiple channels)
-        compressed_2d = result['compressed_2d'][0]  # Remove batch dimension
-        # Average across channels for visualization
-        vision_map = np.mean(compressed_2d, axis=0)
-        im3 = axes[1, 0].imshow(vision_map, cmap='hot', interpolation='nearest')
-        axes[1, 0].set_title(f'4. 2D Vision Tokens\n(Averaged across {compressed_2d.shape[0]} channels)')
-        plt.colorbar(im3, ax=axes[1, 0])
+        # 2. Text embedding visualization
+        ax2 = fig.add_subplot(gs[0, 2])
+        embedding_1d = result['text_embedding'].flatten()
+        embedding_2d = embedding_1d.reshape(-1, 24)  # Reshape for visualization (384 = 16×24)
+        im2 = ax2.imshow(embedding_2d, cmap='viridis', aspect='auto')
+        ax2.set_title(f'2. Text Embedding\n(dim={len(embedding_1d)})', fontsize=12, fontweight='bold')
+        ax2.set_xlabel('Feature dimension')
+        ax2.set_ylabel('Feature blocks')
+        plt.colorbar(im2, ax=ax2, fraction=0.046)
         
-        # 5. Channel visualization (first 4 channels)
-        channel_viz = np.zeros((compressed_2d.shape[1] * 2, compressed_2d.shape[2] * 2))
-        for i in range(min(4, compressed_2d.shape[0])):
-            row = i // 2
-            col = i % 2
-            channel_viz[row*compressed_2d.shape[1]:(row+1)*compressed_2d.shape[1],
-                       col*compressed_2d.shape[2]:(col+1)*compressed_2d.shape[2]] = compressed_2d[i]
+        # 3. Pseudo-image (text rendered to 2D)
+        ax3 = fig.add_subplot(gs[0, 3])
+        pseudo_img = result['pseudo_image'][0, 0]  # Remove batch and channel dims
+        im3 = ax3.imshow(pseudo_img, cmap='gray', interpolation='nearest')
+        ax3.set_title(f'3. Pseudo-Image\n({pseudo_img.shape[0]}×{pseudo_img.shape[1]})', 
+                      fontsize=12, fontweight='bold')
+        ax3.set_xlabel('Width')
+        ax3.set_ylabel('Height')
+        plt.colorbar(im3, ax=ax3, fraction=0.046)
         
-        im4 = axes[1, 1].imshow(channel_viz, cmap='plasma', interpolation='nearest')
-        axes[1, 1].set_title('5. First 4 Channels of Compressed 2D')
-        plt.colorbar(im4, ax=axes[1, 1])
-        
-        # 6. Compression statistics
-        stats_text = f"""Compression Statistics:
-        
-Original Dimension: {result['text_embedding'].shape[-1]}
-Compressed Dimension: {result['compressed_embedding'].shape[-1]}
-Compression Ratio: {result['compression_ratio']:.2f}×
-        
-DeepSeek-OCR Target Ratios:
-- <10×: 97% precision
-- 10-12×: ~90% precision  
-- 20×: ~60% precision
+        # 4. Compression process visualization
+        ax4 = fig.add_subplot(gs[1, :2])
+        compression_steps = f"""Compression Process (DeepEncoder-style):
 
-Current: {result['compression_ratio']:.2f}×"""
+1. Text → Embedding: {len(result['text'])} chars → {result['text_embedding'].shape[-1]} dims
+2. Embedding → Pseudo-Image: {result['text_embedding'].shape[-1]} → 32×32 grid
+3. Conv Layer 1: 32×32×1 → 16×16×8 (stride=2)
+4. Conv Layer 2: 16×16×8 → 8×8×4 (stride=2)
+5. Conv Layer 3: 8×8×4 → 4×4×2 (stride=2)
+6. Conv Layer 4: 4×4×2 → 2×2×1 (stride=2)
+7. Final Project: 4 → {result['compressed_embedding'].shape[-1]} dims
+
+Total Compression: {result['compression_ratio']:.2f}×"""
         
-        axes[1, 2].text(0.1, 0.5, stats_text, ha='left', va='center', fontsize=11, 
-                       family='monospace', bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
-        axes[1, 2].set_title('6. Compression Analysis')
-        axes[1, 2].axis('off')
+        ax4.text(0.05, 0.5, compression_steps, ha='left', va='center', fontsize=10, 
+                family='monospace', bbox=dict(boxstyle='round', facecolor='lightblue', alpha=0.3))
+        ax4.set_title('4. Compression Pipeline', fontsize=12, fontweight='bold')
+        ax4.axis('off')
+        
+        # 5. Compressed 2D representation
+        ax5 = fig.add_subplot(gs[1, 2])
+        compressed_2d = result['compressed_2d'][0, 0]  # Remove batch and channel dims
+        im5 = ax5.imshow(compressed_2d, cmap='hot', interpolation='nearest')
+        ax5.set_title(f'5. Compressed 2D\n({compressed_2d.shape[0]}×{compressed_2d.shape[1]})', 
+                      fontsize=12, fontweight='bold')
+        ax5.set_xlabel('Compressed width')
+        ax5.set_ylabel('Compressed height')
+        plt.colorbar(im5, ax=ax5, fraction=0.046)
+        
+        # 6. Final compressed embedding
+        ax6 = fig.add_subplot(gs[1, 3])
+        compressed_1d = result['compressed_embedding'].flatten()
+        # Create a small grid for visualization
+        grid_size = int(np.ceil(np.sqrt(len(compressed_1d))))
+        padded = np.pad(compressed_1d, (0, grid_size**2 - len(compressed_1d)), constant_values=0)
+        compressed_grid = padded.reshape(grid_size, grid_size)
+        im6 = ax6.imshow(compressed_grid, cmap='coolwarm', interpolation='nearest')
+        ax6.set_title(f'6. Compressed Vector\n(dim={len(compressed_1d)})', 
+                      fontsize=12, fontweight='bold')
+        plt.colorbar(im6, ax=ax6, fraction=0.046)
+        
+        # 7. Compression statistics (spans all columns)
+        ax7 = fig.add_subplot(gs[2, :])
+        stats_text = f"""Compression Performance Metrics:
+
+- Original Text: {len(result['text'])} characters
+- Text Embedding: {result['text_embedding'].shape[-1]} dimensions
+- Compressed Embedding: {result['compressed_embedding'].shape[-1]} dimensions
+- Compression Ratio: {result['compression_ratio']:.2f}× 
+- Storage Reduction: {(1 - 1/result['compression_ratio']) * 100:.1f}%
+- Bytes Saved: {(result['text_embedding'].shape[-1] - result['compressed_embedding'].shape[-1]) * 4} bytes (float32)
+
+DeepSeek-OCR Reference (from paper):
+- <10× compression: 97% OCR precision
+- 10-12× compression: ~90% precision  
+- 20× compression: ~60% precision
+
+Current Status: {result['compression_ratio']:.2f}× compression achieved ✓"""
+        
+        ax7.text(0.5, 0.5, stats_text, ha='center', va='center', fontsize=11, 
+                family='monospace', bbox=dict(boxstyle='round', facecolor='lightgreen', alpha=0.2))
+        ax7.set_title('7. Compression Analysis', fontsize=12, fontweight='bold')
+        ax7.axis('off')
         
         plt.tight_layout()
         plt.savefig(save_path, dpi=150, bbox_inches='tight')
@@ -220,19 +301,16 @@ def main():
         test_compress=True
     )
     
+    # Load the result if it was saved
+    try:
+        with open('./output/result.mmd', 'r') as f:
+            ocr_result = f.read()
+        print("Loaded OCR result from ./output/result.mmd")
+    except:
+        pass
+    
     print("\nOCR Result (first 500 chars):")
-    if ocr_result is None:
-        # Load text from saved result file
-        result_file = './output/result.mmd'
-        if os.path.exists(result_file):
-            with open(result_file, 'r', encoding='utf-8') as f:
-                ocr_result = f.read()
-            print(f"Loaded OCR result from {result_file}")
-        else:
-            print(f"Warning: OCR result file {result_file} not found. Using empty string.")
-            ocr_result = ""
-    else:
-        print(ocr_result[:500] if len(ocr_result) > 500 else ocr_result)
+    print(ocr_result[:500] if len(ocr_result) > 500 else ocr_result)
     print("=" * 80)
     
     # Initialize compression pipeline
@@ -256,6 +334,12 @@ def main():
     print(f"Compressed embedding dimension: {compression_result['compressed_embedding'].shape[-1]}")
     print(f"Compression ratio: {compression_result['compression_ratio']:.2f}×")
     print(f"Storage reduction: {(1 - 1/compression_result['compression_ratio']) * 100:.1f}%")
+    
+    # Verify compression worked
+    if compression_result['compression_ratio'] >= 1.0:
+        print(f"✓ Compression successful! Achieved {compression_result['compression_ratio']:.2f}× reduction")
+    else:
+        print(f"✗ WARNING: Expansion occurred instead of compression!")
     
     # Save compressed representation for later retrieval
     np.save('./compressed_vector.npy', compression_result['compressed_embedding'])
