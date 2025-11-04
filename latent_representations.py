@@ -123,28 +123,42 @@ class DeepSeekOCRQA:
     """
     Enable QA and autoregressive generation with DeepSeek-OCR
     """
-    def __init__(self, model, tokenizer):
+    def __init__(self, model, tokenizer, output_path: str = './output/'):
         self.model = model
         self.tokenizer = tokenizer
-        
+        self.output_path = output_path
+
     def visual_qa(self, image_path: str, question: str) -> str:
         """
         Perform visual question answering
         """
         print(f"DEBUG: QA with image_path: '{image_path}'")
+        
+        # Validate image path
+        if not image_path or not os.path.exists(image_path):
+            return f"Error: Invalid image path '{image_path}'"
+        
         # Craft prompt for QA
         qa_prompt = f"<image>\nQuestion: {question}\nAnswer:"
-        
-        answer = self.model.infer(
-            self.tokenizer,
-            prompt=qa_prompt,
-            image_file=image_path,
-            base_size=1024,
-            image_size=640,
-            crop_mode=True
-        )
-        
-        return answer
+
+        try:
+            answer = self.model.infer(
+                self.tokenizer,
+                prompt=qa_prompt,
+                image_file=image_path,
+                output_path=self.output_path,
+                base_size=1024,
+                image_size=640,
+                crop_mode=True
+            )
+            
+            # Handle case where infer returns None
+            if answer is None:
+                return "Error: Model inference returned None"
+            
+            return answer
+        except Exception as e:
+            return f"Error during QA inference: {str(e)}"
     
     def guided_generation(
         self, 
@@ -155,6 +169,10 @@ class DeepSeekOCRQA:
         """
         Generate text based on image with specific instructions
         """
+        # Validate image path
+        if not image_path or not os.path.exists(image_path):
+            return f"Error: Invalid image path '{image_path}'"
+            
         prompts = {
             'summary': "<image>\nProvide a brief summary of this document:",
             'key_points': "<image>\nList the key points from this document:",
@@ -165,19 +183,33 @@ class DeepSeekOCRQA:
         
         prompt = prompts.get(instruction, f"<image>\n{instruction}")
         
-        return self.model.infer(
-            self.tokenizer,
-            prompt=prompt,
-            image_file=image_path,
-            base_size=1024,
-            image_size=640,
-            crop_mode=True
-        )
+        try:
+            result = self.model.infer(
+                self.tokenizer,
+                prompt=prompt,
+                image_file=image_path,
+                output_path=self.output_path,
+                base_size=1024,
+                image_size=640,
+                crop_mode=True
+            )
+            
+            # Handle case where infer returns None
+            if result is None:
+                return "Error: Model inference returned None"
+                
+            return result
+        except Exception as e:
+            return f"Error during guided generation: {str(e)}"
     
     def extract_structured_data(self, image_path: str, schema: dict) -> dict:
         """
         Extract structured data from document based on schema
         """
+        # Validate image path
+        if not image_path or not os.path.exists(image_path):
+            return {"error": f"Invalid image path '{image_path}'"}
+            
         schema_str = "\n".join([f"- {key}: {desc}" for key, desc in schema.items()])
         
         prompt = f"""<image>
@@ -186,21 +218,29 @@ Extract the following information from this document:
 
 Format as JSON:"""
         
-        result = self.model.infer(
-            self.tokenizer,
-            prompt=prompt,
-            image_file=image_path,
-            base_size=1024,
-            image_size=640,
-            crop_mode=True
-        )
-        
-        # Parse JSON from result
-        import json
         try:
-            return json.loads(result)
-        except:
-            return {"raw_output": result}
+            result = self.model.infer(
+                self.tokenizer,
+                prompt=prompt,
+                image_file=image_path,
+                output_path=self.output_path,
+                base_size=1024,
+                image_size=640,
+                crop_mode=True
+            )
+            
+            # Handle case where infer returns None
+            if result is None:
+                return {"error": "Model inference returned None"}
+            
+            # Parse JSON from result
+            import json
+            try:
+                return json.loads(result)
+            except:
+                return {"raw_output": result}
+        except Exception as e:
+            return {"error": f"Error during structured extraction: {str(e)}"}
 
 # ============= Usage Examples =============
 
@@ -213,44 +253,34 @@ def demonstrate_unified_usage(
     Show how to use DeepSeek-OCR for both embeddings and generation
     """
     
-    # Initialize model with proper device handling
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    print(f"Using device: {device}")
+    # Ensure we have an absolute path for the test image
+    test_image = os.path.abspath(test_image)
+    print(f"DEBUG: Using test image path: '{test_image}'")
     
-    # Check for NVIDIA driver
-    if device == 'cuda':
-        try:
-            torch.cuda.current_device()
-            cuda_available = True
-        except:
-            cuda_available = False
-            device = 'cpu'
-            print("CUDA claimed available but no working GPU found, falling back to CPU")
-    else:
-        cuda_available = False
+    # Validate that the test image exists
+    if not os.path.exists(test_image):
+        print(f"ERROR: Test image not found at '{test_image}'")
+        return None, "Test image not found", "Test image not found", {"error": "Test image not found"}
+    
+    # Initialize model with CUDA
+    device = 'cuda'
+    print(f"Using device: {device}")
     
     tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
     
-    if cuda_available:
-        try:
-            model = AutoModel.from_pretrained(
-                model_name,
-                cache_dir=save_directory,
-                _attn_implementation='flash_attention_2',
-                trust_remote_code=True
-            ).eval().cuda()
-        except:
-            model = AutoModel.from_pretrained(
-                model_name,
-                cache_dir=save_directory,
-                trust_remote_code=True
-            ).eval().cuda()
-    else:
+    try:
+        model = AutoModel.from_pretrained(
+            model_name,
+            cache_dir=save_directory,
+            _attn_implementation='flash_attention_2',
+            trust_remote_code=True
+        ).eval().cuda()
+    except:
         model = AutoModel.from_pretrained(
             model_name,
             cache_dir=save_directory,
             trust_remote_code=True
-        ).eval()
+        ).eval().cuda()
     
     # First, run OCR to get the text (like in embedding_visual.py)
     prompt = "<image>\n<|grounding|>Convert the document to markdown. "
@@ -290,16 +320,28 @@ def demonstrate_unified_usage(
     
     print("Extracting embeddings...")
     try:
-        # For embeddings, we can use a dummy approach since the hook method isn't working
-        # Instead, let's create embeddings from the OCR text result
-        from sentence_transformers import SentenceTransformer
-        text_encoder = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-        
-        # Create embeddings from the OCR result
+        # For embeddings, we can use a simple approach - encode the OCR text using the tokenizer
         if ocr_result:
-            text_embedding = text_encoder.encode(ocr_result, convert_to_tensor=True)
-            embeddings_matrix = text_embedding.cpu().numpy()
-            print(f"Embedding shape: {embeddings_matrix.shape}")
+            # Use the model's tokenizer to create embeddings from text
+            text_tokens = tokenizer(ocr_result, return_tensors='pt', truncation=True, max_length=512)
+            
+            # Move tokens to the same device as the model
+            device = next(model.parameters()).device
+            text_tokens = {k: v.to(device) for k, v in text_tokens.items()}
+            
+            # Get text embeddings from the model if possible
+            with torch.no_grad():
+                if hasattr(model, 'get_input_embeddings'):
+                    embeddings = model.get_input_embeddings()(text_tokens['input_ids'])
+                    # Pool the embeddings (mean pooling)
+                    pooled_embeddings = embeddings.mean(dim=1)
+                    embeddings_matrix = pooled_embeddings.cpu().numpy()
+                    print(f"Embedding shape: {embeddings_matrix.shape}")
+                else:
+                    # Fallback: use a simple hash-based embedding
+                    text_hash = hash(ocr_result) % (2**32)
+                    embeddings_matrix = np.array([[text_hash]], dtype=np.float32)
+                    print(f"Hash-based embedding shape: {embeddings_matrix.shape}")
         else:
             embeddings_matrix = None
             print("No text to create embeddings from")
@@ -311,6 +353,7 @@ def demonstrate_unified_usage(
     qa_system = DeepSeekOCRQA(model, tokenizer)
     
     print("Performing visual QA...")
+    print(f"DEBUG: About to call QA with test_image: '{test_image}'")
     try:
         answer = qa_system.visual_qa(
             test_image,
@@ -323,6 +366,7 @@ def demonstrate_unified_usage(
     
     # 3. Guided generation
     print("Generating summary...")
+    print(f"DEBUG: About to call guided_generation with test_image: '{test_image}'")
     try:
         summary = qa_system.guided_generation(
             test_image,
@@ -335,6 +379,7 @@ def demonstrate_unified_usage(
     
     # 4. Structured extraction
     print("Extracting structured data...")
+    print(f"DEBUG: About to call extract_structured_data with test_image: '{test_image}'")
     try:
         paper_schema = {
             'title': 'The title of the document',
@@ -345,126 +390,6 @@ def demonstrate_unified_usage(
         
         structured_data = qa_system.extract_structured_data(
             test_image,
-            paper_schema
-        )
-        print(f"Structured data: {str(structured_data)[:200]}...")
-    except Exception as e:
-        print(f"Structured extraction failed: {e}")
-        structured_data = {"error": str(e)}
-    
-    return embeddings_matrix, answer, summary, structured_data
-    """
-    Show how to use DeepSeek-OCR for both embeddings and generation
-    """
-    
-    # Initialize model with proper device handling
-    
-    
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    print(f"Using device: {device}")
-    
-    # Check for NVIDIA driver
-    if device == 'cuda':
-        try:
-            torch.cuda.current_device()
-            cuda_available = True
-        except:
-            cuda_available = False
-            device = 'cpu'
-            print("CUDA claimed available but no working GPU found, falling back to CPU")
-    else:
-        cuda_available = False
-    
-    tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
-    
-    if cuda_available:
-        try:
-            model = AutoModel.from_pretrained(
-                model_name,
-                cache_dir=save_directory,
-                _attn_implementation='flash_attention_2',
-                trust_remote_code=True
-            ).eval().cuda()
-        except:
-            model = AutoModel.from_pretrained(
-                model_name,
-                cache_dir=save_directory,
-                trust_remote_code=True
-            ).eval().cuda()
-    else:
-        model = AutoModel.from_pretrained(
-            model_name,
-            cache_dir=save_directory,
-            trust_remote_code=True
-        ).eval()
-    
-    # 1. Use as embedding model for RAG
-    encoder = DeepSeekOCREncoder(model, tokenizer)
-    
-    # Use existing image file for testing
-    print(f"Using test image: {test_image}")
-    
-    # Convert to absolute path
-    import os
-    test_image_abs = os.path.abspath(test_image)
-    print(f"Absolute path: {test_image_abs}")
-    
-    # Check if file exists
-    if not os.path.exists(test_image_abs):
-        print(f"Error: Image file {test_image_abs} does not exist!")
-        return None, "File not found", "File not found", {"error": "File not found"}
-    
-    print("Extracting embeddings...")
-    try:
-        emb = encoder.create_unified_embedding(test_image_abs)
-        if emb is not None:
-            print(f"Embedding shape: {emb.shape}")
-            embeddings_matrix = emb
-        else:
-            print("Failed to extract embeddings")
-            embeddings_matrix = None
-    except Exception as e:
-        print(f"Error extracting embeddings: {e}")
-        embeddings_matrix = None
-    
-    # 2. Use for QA
-    qa_system = DeepSeekOCRQA(model, tokenizer)
-    
-    print("Performing visual QA...")
-    try:
-        answer = qa_system.visual_qa(
-            test_image_abs,
-            'What is the main topic of this document?'
-        )
-        print(f"QA Answer: {answer[:200]}...")
-    except Exception as e:
-        print(f"QA failed: {e}")
-        answer = "QA failed"
-    
-    # 3. Guided generation
-    print("Generating summary...")
-    try:
-        summary = qa_system.guided_generation(
-            test_image_abs,
-            'summary'
-        )
-        print(f"Summary: {summary[:200]}...")
-    except Exception as e:
-        print(f"Summary generation failed: {e}")
-        summary = "Summary failed"
-    
-    # 4. Structured extraction
-    print("Extracting structured data...")
-    try:
-        paper_schema = {
-            'title': 'The title of the document',
-            'authors': 'List of authors',
-            'main_topic': 'Main research topic',
-            'key_findings': 'Key findings or contributions'
-        }
-        
-        structured_data = qa_system.extract_structured_data(
-            test_image_abs,
             paper_schema
         )
         print(f"Structured data: {str(structured_data)[:200]}...")
@@ -476,7 +401,7 @@ def demonstrate_unified_usage(
 
 if __name__ == "__main__":
     try:
-        embeddings_matrix, answer, summary, structured_data = demonstrate_unified_usage()
+        embeddings_matrix, answer, summary, structured_data = demonstrate_unified_usage(test_image = './images/mamorx.png')
         
         if embeddings_matrix is not None:
             print(f"\n✓ Embeddings shape: {embeddings_matrix.shape}")

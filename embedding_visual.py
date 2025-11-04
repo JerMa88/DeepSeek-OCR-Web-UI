@@ -285,7 +285,8 @@ Current Status: {result['compression_ratio']:.2f}× compression achieved ✓"""
 def main():
     # Run DeepSeek-OCR on image
     prompt = "<image>\n<|grounding|>Convert the document to markdown. "
-    image_file = './images/rec_sys.png'
+    # image_file = './images/rec_sys.png'
+    image_file = './images/mamorx.png'
     output_path = './output/'
     
     print("Running DeepSeek-OCR inference...")
@@ -344,6 +345,107 @@ def main():
     # Save compressed representation for later retrieval
     np.save('./compressed_vector.npy', compression_result['compressed_embedding'])
     print(f"\nCompressed vector saved to ./compressed_vector.npy")
+    
+    # ============== Additional Generations ==============
+    print("\n" + "=" * 80)
+    print("ADDITIONAL DOCUMENT ANALYSIS")
+    print("=" * 80)
+    
+    # 1. Visual QA
+    print("\nPerforming visual QA...")
+    qa_prompt = f"<image>\nQuestion: What is the main topic of this document?\nAnswer:"
+    
+    try:
+        qa_answer = model.infer(
+            tokenizer,
+            prompt=qa_prompt,
+            image_file=image_file,
+            output_path=output_path,
+            base_size=1024,
+            image_size=640,
+            crop_mode=True
+        )
+        
+        if qa_answer is None:
+            qa_answer = "Error: Model inference returned None"
+        
+        print(f"QA Answer: {qa_answer}")
+    except Exception as e:
+        print(f"QA failed: {e}")
+        qa_answer = f"Error during QA inference: {str(e)}"
+    
+    # 2. Summary generation
+    print("\nGenerating summary...")
+    summary_prompt = "<image>\nProvide a brief summary of this document:"
+    
+    try:
+        summary = model.infer(
+            tokenizer,
+            prompt=summary_prompt,
+            image_file=image_file,
+            output_path=output_path,
+            base_size=1024,
+            image_size=640,
+            crop_mode=True
+        )
+        
+        if summary is None:
+            summary = "Error: Model inference returned None"
+        
+        print(f"Summary: {summary}")
+    except Exception as e:
+        print(f"Summary generation failed: {e}")
+        summary = f"Error during summary generation: {str(e)}"
+    
+    # 3. Structured extraction
+    print("\nExtracting structured data...")
+    paper_schema = {
+        'title': 'The title of the document',
+        'authors': 'List of authors',
+        'main_topic': 'Main research topic',
+        'key_findings': 'Key findings or contributions'
+    }
+    
+    schema_str = "\n".join([f"- {key}: {desc}" for key, desc in paper_schema.items()])
+    
+    structured_prompt = f"""<image>
+Extract the following information from this document:
+{schema_str}
+
+Format as JSON:"""
+    
+    try:
+        structured_result = model.infer(
+            tokenizer,
+            prompt=structured_prompt,
+            image_file=image_file,
+            output_path=output_path,
+            base_size=1024,
+            image_size=640,
+            crop_mode=True
+        )
+        
+        if structured_result is None:
+            structured_data = {"error": "Model inference returned None"}
+        else:
+            # Parse JSON from result
+            import json
+            try:
+                structured_data = json.loads(structured_result)
+            except:
+                structured_data = {"raw_output": structured_result}
+        
+        print(f"Structured data: {structured_data}")
+    except Exception as e:
+        print(f"Structured extraction failed: {e}")
+        structured_data = {"error": f"Error during structured extraction: {str(e)}"}
+    
+    # Add results to compression_result
+    compression_result.update({
+        'qa_answer': qa_answer,
+        'summary': summary,
+        'structured_data': structured_data
+    })
     
     return compression_result
 
